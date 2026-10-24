@@ -1,0 +1,1321 @@
+<title>QUADRA</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: bar atas lengket dengan tab, hero biru berlapis dengan parabola hidup, lalu lima bagian (Beranda, Materi, Lab Grafik, Studi Kasus, Kuis). Biru royal sebagai dasar, oranye sebagai penanda aksi, putih sebagai permukaan. */
+:root{
+  color-scheme:light;
+  --bg:#f2f7ff; --surface:#ffffff; --surface2:#eaf2ff; --ink:#0a1f4d; --muted:#475b82; --line:#d0def5;
+  --blue:#1d4fe8; --blue-ink:#ffffff; --blue-soft:#e3ecff; --navy:#0a2a6b;
+  --orange:#ff7a1a; --orange-ink:#1d0a00; --orange-soft:#fff0e1; --sky:#0b9be0;
+  --ok:#12803a; --ok-soft:#e3f6ea; --bad:#c5221f; --bad-soft:#fdeaea;
+  --hero-a:#1d4fe8; --hero-b:#0a2a6b; --shadow:rgba(10,42,107,.12);
+  --cv-grid:#e1ebfb; --cv-axis:#8aa0c8; --cv-text:#4b5f86; --cv-bg:#ffffff; --cv-halo:#ffffff;
+  --f-display:'Unbounded','Trebuchet MS',system-ui,sans-serif;
+  --f-body:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#061029; --surface:#0d1c42; --surface2:#112553; --ink:#eaf1ff; --muted:#a3b6dc; --line:#20386d;
+    --blue:#6b94ff; --blue-ink:#04112e; --blue-soft:#14295e; --navy:#cfe0ff;
+    --orange:#ff9446; --orange-ink:#1d0a00; --orange-soft:#2d1a10; --sky:#4cc3ff;
+    --ok:#5ddb8a; --ok-soft:#0f2d1d; --bad:#ff8a80; --bad-soft:#331616;
+    --hero-a:#1b3fae; --hero-b:#071a45; --shadow:rgba(0,0,0,.4);
+    --cv-grid:#1a2f60; --cv-axis:#5f79b0; --cv-text:#9db1d9; --cv-bg:#0b1840; --cv-halo:#0b1840; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#061029; --surface:#0d1c42; --surface2:#112553; --ink:#eaf1ff; --muted:#a3b6dc; --line:#20386d;
+  --blue:#6b94ff; --blue-ink:#04112e; --blue-soft:#14295e; --navy:#cfe0ff;
+  --orange:#ff9446; --orange-ink:#1d0a00; --orange-soft:#2d1a10; --sky:#4cc3ff;
+  --ok:#5ddb8a; --ok-soft:#0f2d1d; --bad:#ff8a80; --bad-soft:#331616;
+  --hero-a:#1b3fae; --hero-b:#071a45; --shadow:rgba(0,0,0,.4);
+  --cv-grid:#1a2f60; --cv-axis:#5f79b0; --cv-text:#9db1d9; --cv-bg:#0b1840; --cv-halo:#0b1840; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.65 var(--f-body);min-height:100vh}
+h1,h2,h3,h4,p,ul,ol{margin:0}
+ul,ol{padding-left:1.25rem}
+a{color:inherit}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{width:100%;max-width:1120px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.mono{font-family:var(--f-mono)}
+.muted{color:var(--muted)}
+
+/* bar atas */
+.safe-band{position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--surface);z-index:101}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:100;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:.6rem 1.2rem;flex-wrap:wrap;padding-block:.65rem}
+.logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;font:800 1.15rem var(--f-display);letter-spacing:.06em;color:var(--ink);background:none;border:0;cursor:pointer;padding:0}
+.logo svg{display:block;width:34px;height:34px}
+.tabs{display:flex;gap:.3rem;overflow-x:auto;max-width:100%;padding:2px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{display:flex;align-items:center;gap:.4rem;border:0;background:transparent;color:var(--muted);font:700 .88rem var(--f-body);padding:.55rem 1rem;border-radius:999px;cursor:pointer;white-space:nowrap;transition:background .2s,color .2s}
+.tab-btn:hover{background:var(--blue-soft);color:var(--ink)}
+.tab-btn[aria-current="page"]{background:var(--blue);color:var(--blue-ink)}
+.tab-btn .pip{width:7px;height:7px;border-radius:50%;background:var(--orange)}
+@media (max-width:640px){.tabs{width:100%}}
+
+/* tombol */
+.btn{font:700 .9rem var(--f-body);color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:.6rem 1.05rem;cursor:pointer;line-height:1.2;transition:transform .15s,border-color .2s,background .2s}
+.btn:hover{border-color:var(--blue);transform:translateY(-2px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:var(--blue-ink)}
+.btn.small{padding:.42rem .8rem;font-size:.8rem;border-radius:999px}
+.btn.orange{background:var(--orange);border-color:var(--orange);color:var(--orange-ink)}
+.btn.orange:hover{filter:brightness(1.07)}
+.btn.blue{background:var(--blue);border-color:var(--blue);color:var(--blue-ink)}
+.btn.ghost-w{background:transparent;border-color:rgba(255,255,255,.55);color:#fff}
+.btn.ghost-w:hover{background:rgba(255,255,255,.12);border-color:#fff}
+.row{display:flex;flex-wrap:wrap;gap:.5rem}
+
+/* hero */
+.hero{position:relative;overflow:hidden;color:#fff;background:linear-gradient(135deg,var(--hero-a),var(--hero-b))}
+.hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:36px 36px;-webkit-mask-image:linear-gradient(120deg,transparent 10%,#000 70%);mask-image:linear-gradient(120deg,transparent 10%,#000 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;width:420px;height:420px;border-radius:50%;right:-120px;top:-160px;background:radial-gradient(circle,rgba(255,122,26,.55),rgba(255,122,26,0) 70%);pointer-events:none}
+.hero-in{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:2rem 2.5rem;align-items:center;padding-block:3rem 3.4rem}
+.eyebrow{display:inline-block;font:600 .74rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:.35rem .8rem;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);margin-bottom:1rem}
+.hero h1{font:800 clamp(1.9rem,4.6vw,3.2rem)/1.1 var(--f-display);text-wrap:balance;letter-spacing:-.01em}
+.hero h1 .hl{color:var(--orange)}
+.hero .lede{margin-top:1rem;max-width:52ch;color:rgba(255,255,255,.88);font-size:1.05rem}
+.hero .tag{margin-top:.9rem;font:600 .78rem var(--f-mono);letter-spacing:.04em;color:rgba(255,255,255,.7)}
+.hero .row{margin-top:1.5rem}
+.hero-card{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.25);border-radius:22px;padding:.9rem;box-shadow:0 20px 50px rgba(0,0,0,.25);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);min-width:0}
+.hero-card .cv{position:relative;aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:rgba(6,16,41,.35)}
+.hero-card canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem;font:500 .82rem var(--f-mono)}
+.hero-chips span{padding:.25rem .6rem;border-radius:8px;background:rgba(255,255,255,.12)}
+.hero-chips .ha{color:#9dc0ff} .hero-chips .hb{color:#ffb070} .hero-chips .hc{color:#8fe0ff}
+.hero-card small{display:block;margin-top:.5rem;font-size:.78rem;color:rgba(255,255,255,.7)}
+@media (max-width:860px){.hero-in{grid-template-columns:minmax(0,1fr);padding-block:2.2rem 2.6rem}}
+
+/* umum */
+.main{padding-block:2.4rem 3rem}
+.section{display:none}
+.section.active{display:block}
+.section.active>*{animation:rise .35s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.sec-head{margin-bottom:1.5rem;max-width:68ch}
+.sec-head .kicker{display:inline-block;font:700 .72rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-bottom:.4rem}
+.sec-head h2{font:800 clamp(1.4rem,3.2vw,2.1rem)/1.15 var(--f-display);text-wrap:balance}
+.sec-head p{margin-top:.6rem;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:1.4rem;box-shadow:0 4px 18px var(--shadow);min-width:0}
+.card h3{font:800 1.05rem/1.3 var(--f-display);margin-bottom:.5rem}
+.lbl{font:700 .7rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:.4rem}
+.chip{display:inline-block;font:700 .68rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:.22rem .6rem;border-radius:999px;background:var(--blue-soft);color:var(--blue)}
+.chip.o{background:var(--orange-soft);color:var(--orange)}
+.chip.k{background:var(--surface2);color:var(--muted)}
+.fx{font:500 .92em var(--f-mono);background:var(--blue-soft);color:var(--blue);padding:.1em .5em;border-radius:8px;display:inline-block}
+.callout{background:var(--orange-soft);border-left:4px solid var(--orange);border-radius:0 14px 14px 0;padding:.85rem 1.1rem;font-size:.95rem}
+
+/* beranda */
+.feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;margin-bottom:2.4rem}
+.feat{display:flex;flex-direction:column;gap:.55rem;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:20px;padding:1.3rem;cursor:pointer;color:inherit;transition:transform .2s,box-shadow .2s,border-color .2s;box-shadow:0 4px 18px var(--shadow)}
+.feat:hover{transform:translateY(-5px);border-color:var(--blue);box-shadow:0 14px 34px var(--shadow)}
+.feat.main{background:var(--orange-soft);border-color:var(--orange)}
+.feat .ico{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--blue);color:var(--blue-ink)}
+.feat.main .ico{background:var(--orange);color:var(--orange-ink)}
+.feat .ico svg{width:26px;height:26px}
+.feat h3{font:800 1rem/1.25 var(--f-display)}
+.feat p{font-size:.92rem;color:var(--muted)}
+.feat .chip{align-self:flex-start;margin-top:auto}
+.flow{list-style:none;padding:0;counter-reset:s;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:2.4rem}
+.flow li{counter-increment:s;position:relative;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:1.2rem 1.2rem 1.2rem 4rem;min-width:0}
+.flow li::before{content:counter(s);position:absolute;left:1rem;top:1rem;width:2.1rem;height:2.1rem;border-radius:50%;display:grid;place-items:center;background:var(--blue);color:var(--blue-ink);font:800 .95rem var(--f-display)}
+.flow li:nth-child(even)::before{background:var(--orange);color:var(--orange-ink)}
+.flow b{display:block;font-weight:800}
+.flow span{font-size:.9rem;color:var(--muted)}
+.smart{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.2rem;background:var(--navy);color:#fff;border-radius:24px;padding:1.8rem;position:relative;overflow:hidden}
+.smart{background:linear-gradient(135deg,var(--hero-b),var(--hero-a))}
+.smart h2{grid-column:1/-1;font:800 clamp(1.2rem,2.6vw,1.6rem)/1.2 var(--f-display)}
+.smart h2 span{color:var(--orange)}
+.smart div{min-width:0}
+.smart h3{font:700 .95rem var(--f-body);color:var(--orange);margin-bottom:.3rem}
+.smart p{font-size:.92rem;color:rgba(255,255,255,.85)}
+
+/* materi */
+.materi{display:grid;grid-template-columns:220px minmax(0,1fr);gap:1.6rem;align-items:start}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 5.2rem);display:flex;flex-direction:column;gap:.4rem}
+.toc button{display:flex;gap:.6rem;align-items:center;text-align:left;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:.65rem .8rem;font:600 .88rem var(--f-body);cursor:pointer;transition:border-color .2s,transform .15s}
+.toc button:hover{border-color:var(--orange);transform:translateX(3px)}
+.toc b{width:1.7rem;height:1.7rem;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--blue);color:var(--blue-ink);font:800 .8rem var(--f-display)}
+.lessons{display:flex;flex-direction:column;gap:1.4rem;min-width:0}
+.lesson{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 5rem)}
+.lesson .num{font:700 .72rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--orange)}
+.lesson h3{font:800 clamp(1.15rem,2.6vw,1.5rem)/1.2 var(--f-display);margin:.2rem 0 .8rem}
+.lesson p+p,.lesson p+.abc,.lesson .abc+p{margin-top:.8rem}
+.formula{font:500 clamp(1rem,2.8vw,1.35rem) var(--f-mono);background:var(--blue-soft);border-radius:14px;padding:.8rem 1.1rem;margin:.9rem 0;overflow-x:auto}
+.formula .a{color:var(--blue)} .formula .b{color:var(--orange)} .formula .c{color:var(--sky)}
+.abc{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.8rem;margin-block:.9rem}
+.abc div{border-radius:14px;padding:.9rem 1rem;border:1.5px solid var(--line);min-width:0}
+.abc .ta{border-color:var(--blue)} .abc .tb{border-color:var(--orange)} .abc .tc{border-color:var(--sky)}
+.abc b{display:block;font:500 1.4rem var(--f-mono)}
+.abc .ta b{color:var(--blue)} .abc .tb b{color:var(--orange)} .abc .tc b{color:var(--sky)}
+.abc span{font-size:.88rem;color:var(--muted)}
+.unsur{list-style:none;padding:0;display:grid;gap:.5rem;margin-block:.9rem;font-size:.95rem}
+.unsur li{display:flex;gap:.7rem;align-items:baseline;min-width:0}
+.unsur i{flex:none;width:.7rem;height:.7rem;border-radius:50%;transform:translateY(.05rem)}
+.anat{max-width:520px;margin:1rem auto .4rem}
+.anat svg{display:block;width:100%;height:auto;background:var(--cv-bg);border:1px solid var(--line);border-radius:14px}
+.anat .t{fill:var(--ink);font:500 11.5px var(--f-mono);paint-order:stroke;stroke:var(--cv-halo);stroke-width:4px;stroke-linejoin:round}
+.dtable{width:100%;border-collapse:collapse;font-size:.92rem;margin-block:.9rem}
+.dtable th,.dtable td{padding:.55rem .7rem;text-align:left;border-bottom:1px solid var(--line)}
+.dtable th{font:700 .72rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tbl{overflow-x:auto}
+details.eg{border:1.5px solid var(--line);border-left:5px solid var(--orange);border-radius:0 14px 14px 0;margin-top:.9rem;background:var(--surface)}
+details.eg summary{cursor:pointer;padding:.8rem 1rem;font-weight:600;list-style:none;display:flex;gap:.7rem;align-items:baseline}
+details.eg summary::-webkit-details-marker{display:none}
+details.eg summary::after{content:'Lihat pembahasan';margin-left:auto;flex:none;font:700 .72rem var(--f-mono);color:var(--blue)}
+details.eg[open] summary::after{content:'Tutup'}
+details.eg .sol{padding:.2rem 1.1rem 1rem;border-top:1px dashed var(--line)}
+details.eg .sol ol{display:flex;flex-direction:column;gap:.4rem;margin:.7rem 0;font-size:.94rem}
+details.eg .ans{background:var(--ok-soft);color:var(--ok);font-weight:700;border-radius:10px;padding:.5rem .8rem;display:inline-block;margin-top:.2rem}
+.next{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between;background:var(--blue);color:var(--blue-ink);border-radius:20px;padding:1.2rem 1.4rem}
+.next b{font:800 1.05rem var(--f-display)}
+@media (max-width:860px){
+  .materi{grid-template-columns:minmax(0,1fr)}
+  .toc{position:static;flex-direction:row;overflow-x:auto;padding-bottom:4px}
+  .toc button{white-space:nowrap}
+}
+
+/* lab */
+.lab{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1.4rem;align-items:start}
+.stage{min-width:0;display:flex;flex-direction:column;gap:1rem}
+.cv-box{position:relative;aspect-ratio:1/1;width:100%;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:var(--cv-bg);box-shadow:0 4px 18px var(--shadow)}
+.cv-box canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.delta{background:var(--blue);color:var(--blue-ink);border-radius:18px;padding:1rem 1.2rem;min-height:5.4rem}
+.delta .lbl{color:var(--blue-ink);opacity:.8}
+.delta p{font-size:.96rem;line-height:1.6}
+.panel{min-width:0;display:flex;flex-direction:column;gap:1.1rem}
+.ctls{display:flex;flex-direction:column;gap:1.1rem}
+.ctl{display:grid;grid-template-columns:7.2rem minmax(0,1fr) 5rem;gap:12px;align-items:center}
+.ctl label{display:flex;flex-direction:column;line-height:1.2}
+.ctl label b{font:500 1.4rem var(--f-mono)}
+.ctl label small{color:var(--muted);font-size:.74rem}
+.ctl.a b{color:var(--blue)} .ctl.b b{color:var(--orange)} .ctl.c b{color:var(--sky)}
+.ctl.a input[type=range]{accent-color:var(--blue)} .ctl.b input[type=range]{accent-color:var(--orange)} .ctl.c input[type=range]{accent-color:var(--sky)}
+input[type=range]{width:100%;margin:0;min-width:0}
+input[type=number],input[type=text]{font:500 .95rem var(--f-mono);color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:.55rem .65rem;width:100%;min-width:0}
+input[type=number]:focus,input[type=text]:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 3px var(--blue-soft)}
+.note{color:var(--orange);font-size:.88rem;min-height:1.3em;margin-top:.5rem;font-weight:600}
+.out{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:7px 16px;margin:0}
+.out dt{font:700 .68rem var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding-top:.25rem}
+.out dd{margin:0;font:400 .88rem var(--f-mono);overflow-wrap:anywhere}
+.explain{display:flex;flex-direction:column;gap:.5rem;font-size:.94rem;color:var(--muted)}
+.explain b{color:var(--ink)}
+.chal{margin-top:1rem;border-top:1px dashed var(--line);padding-top:1rem;display:flex;flex-direction:column;gap:.7rem;font-size:.94rem}
+.meter{height:10px;background:var(--surface2);border-radius:5px;overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--orange);border-radius:5px;transition:width .2s}
+.meter.good i{background:var(--ok)}
+.small-note{color:var(--muted);font-size:.88rem}
+@media (max-width:860px){.lab,.case-grid,.prac{grid-template-columns:minmax(0,1fr)!important}}
+@media (max-width:560px){.ctl{grid-template-columns:5.4rem minmax(0,1fr) 4.4rem;gap:8px}.cv-box{aspect-ratio:5/4}.card{padding:1.1rem}}
+
+/* studi kasus */
+.picker{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.3rem}
+.pick{display:flex;flex-direction:column;gap:.1rem;text-align:left;background:var(--surface);color:var(--ink);border:1.5px solid var(--line);border-radius:16px;padding:.7rem 1rem;cursor:pointer;min-width:150px;flex:1 1 150px;transition:border-color .2s,transform .15s}
+.pick:hover{transform:translateY(-3px);border-color:var(--blue)}
+.pick b{font:800 .95rem var(--f-display)}
+.pick span{font-size:.8rem;color:var(--muted)}
+.pick[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);color:var(--orange-ink)}
+.pick[aria-pressed="true"] span{color:var(--orange-ink)}
+.case-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1.4rem;align-items:start}
+.case-grid .cv-box{aspect-ratio:4/3}
+.cc{display:flex;flex-direction:column;gap:.3rem;margin-bottom:1rem}
+.cc label{display:flex;justify-content:space-between;gap:1rem;font-weight:600;font-size:.92rem}
+.cc output{font:500 .92rem var(--f-mono);color:var(--blue)}
+.cc.cur label{color:var(--orange)} .cc.cur output{color:var(--orange)}
+.cc input[type=range]{accent-color:var(--blue)} .cc.cur input[type=range]{accent-color:var(--orange)}
+.goal{border-radius:16px;padding:.9rem 1.1rem;background:var(--orange-soft);border:1.5px solid var(--orange);font-size:.95rem}
+.goal.done{background:var(--ok-soft);border-color:var(--ok)}
+.goal b{display:block;font-family:var(--f-display);font-size:.9rem;margin-bottom:.2rem}
+.goal.done b{color:var(--ok)}
+.story{font-size:.96rem;color:var(--muted)}
+
+/* kuis */
+.prac{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:1.4rem;align-items:start}
+.qhead{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-bottom:.7rem;font:700 .8rem var(--f-mono);color:var(--muted)}
+.qprog{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;margin-bottom:1.2rem}
+.qprog i{display:block;height:100%;background:var(--blue);width:0;transition:width .3s}
+.q-text{font-size:1.12rem;line-height:1.7;margin-bottom:1rem}
+.ans-row{display:flex;gap:10px;flex-wrap:wrap}
+.ans-row input{max-width:13rem}
+.opts{display:grid;gap:.6rem}
+.opt{text-align:left;width:100%}
+.actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}
+.fb{margin-top:1rem;padding:1rem 1.1rem;border-radius:16px;border:1.5px solid var(--line);font-size:.96rem;line-height:1.65}
+.fb.ok{border-color:var(--ok);background:var(--ok-soft)}
+.fb.bad{border-color:var(--bad);background:var(--bad-soft)}
+.fb strong{display:block;margin-bottom:.25rem;font-family:var(--f-display);font-size:.95rem}
+.fb.ok strong{color:var(--ok)} .fb.bad strong{color:var(--bad)}
+.fb .why{font:700 .68rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:.7rem}
+.fb ol{margin:.3rem 0 0;padding-left:1.25rem;display:flex;flex-direction:column;gap:.3rem;font-family:var(--f-mono);font-size:.84rem}
+.intro-q{text-align:left;display:flex;flex-direction:column;gap:1rem}
+.intro-q ul{display:grid;gap:.4rem;color:var(--muted)}
+.score{font:800 clamp(2.4rem,8vw,3.6rem)/1 var(--f-display);color:var(--blue)}
+.score small{font-size:.4em;color:var(--muted)}
+.mast{display:flex;flex-direction:column;gap:.9rem;margin-top:1rem}
+.mrow .t{display:flex;justify-content:space-between;gap:12px;font-size:.9rem;font-weight:600}
+.mrow .t span:last-child{font-family:var(--f-mono);color:var(--muted)}
+.bar2{height:9px;background:var(--surface2);border-radius:5px;overflow:hidden;margin-top:.25rem}
+.bar2 i{display:block;height:100%;background:var(--blue);width:0}
+.bar2 i.warn{background:var(--orange)}
+.best{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:1rem}
+.best b{font:800 1.5rem var(--f-display);color:var(--orange)}
+
+.footer{border-top:1px solid var(--line);padding-block:1.6rem 2.4rem;color:var(--muted);font-size:.86rem;text-align:center}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<div class="safe-band"></div>
+<header class="topbar">
+  <div class="wrap bar">
+    <button class="logo" type="button" data-tab="beranda" aria-label="QUADRA, ke beranda">
+      <svg viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="10" fill="#1d4fe8"/><path d="M7 8 Q17 34 27 8" fill="none" stroke="#ff7a1a" stroke-width="3.2" stroke-linecap="round"/><circle cx="17" cy="21" r="2.6" fill="#fff"/></svg>
+      QUADRA
+    </button>
+    <nav class="tabs" aria-label="Navigasi halaman">
+      <button class="tab-btn" type="button" data-tab="beranda" aria-current="page">Beranda</button>
+      <button class="tab-btn" type="button" data-tab="materi">Materi</button>
+      <button class="tab-btn" type="button" data-tab="lab"><span class="pip" aria-hidden="true"></span>Lab Grafik</button>
+      <button class="tab-btn" type="button" data-tab="kasus">Studi Kasus</button>
+      <button class="tab-btn" type="button" data-tab="kuis">Kuis</button>
+    </nav>
+  </div>
+</header>
+
+<div class="hero" id="hero">
+  <div class="wrap hero-in">
+    <div>
+      <span class="eyebrow">Inovasi EduTech MIPA &middot; Education 5.0</span>
+      <h1>Fungsi kuadrat bukan lagi sekadar <span class="hl">rumus</span>.</h1>
+      <p class="lede">QUADRA membantu siswa mengabstraksi fungsi kuadrat lewat grafik yang bisa diotak-atik, studi kasus dunia nyata, dan kuis dengan pembahasan otomatis.</p>
+      <p class="tag">Mengabstraksi Matematika dan Sains melalui Integrasi Sistem Cerdas</p>
+      <div class="row">
+        <button class="btn orange" type="button" data-go="materi">Mulai dari Materi</button>
+        <button class="btn ghost-w" type="button" data-go="lab">Buka Lab Grafik</button>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="cv"><canvas id="hero-cv" role="img" aria-label="Parabola yang bentuknya berubah-ubah secara otomatis"></canvas></div>
+      <div class="hero-chips" aria-hidden="true"><span class="ha" id="h-a"></span><span class="hb" id="h-b"></span><span class="hc" id="h-c"></span></div>
+      <small>Peragaan langsung: a, b, dan c berubah, parabola ikut bergerak.</small>
+    </div>
+  </div>
+</div>
+
+<main class="main wrap">
+
+<!-- BERANDA -->
+<div class="section active" id="sec-beranda">
+  <div class="sec-head"><span class="kicker">Empat cara belajar</span><h2>Dari memahami, mencoba, menerapkan, sampai menguji.</h2></div>
+  <div class="feats">
+    <button class="feat" type="button" data-go="materi">
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M9 8h6M9 12h4"/></svg></span>
+      <h3>Materi dan contoh soal</h3>
+      <p>Empat topik runtut, tiap topik punya contoh soal dengan pembahasan langkah demi langkah.</p>
+      <span class="chip">4 topik</span>
+    </button>
+    <button class="feat main" type="button" data-go="lab">
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 4c3 18 15 18 18 0"/><circle cx="12" cy="15.5" r="1.6" fill="currentColor"/></svg></span>
+      <h3>Lab Grafik interaktif</h3>
+      <p>Masukkan atau geser koefisien a, b, c dan lihat parabola, puncak, serta akar berubah seketika.</p>
+      <span class="chip o">Inovasi utama</span>
+    </button>
+    <button class="feat" type="button" data-go="kasus">
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span>
+      <h3>Studi kasus dunia nyata</h3>
+      <p>Lemparan bola, luas kebun, laba usaha, dan antena parabola. Fungsi kuadrat dipakai untuk menjawab pertanyaan nyata.</p>
+      <span class="chip">4 kasus</span>
+    </button>
+    <button class="feat" type="button" data-go="kuis">
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+      <h3>Kuis dan pembahasan otomatis</h3>
+      <p>Sepuluh soal acak. Setiap jawaban langsung dibahas, termasuk letak kekeliruan yang umum terjadi.</p>
+      <span class="chip">10 soal</span>
+    </button>
+  </div>
+
+  <div class="sec-head"><span class="kicker">Alur belajar</span><h2>Urutan yang disarankan</h2></div>
+  <ol class="flow">
+    <li><b>Pahami</b><span>Baca materi dan kerjakan contoh soal.</span></li>
+    <li><b>Eksperimen</b><span>Ubah a, b, c di Lab Grafik sampai pola terlihat.</span></li>
+    <li><b>Terapkan</b><span>Pakai di studi kasus: lemparan, kebun, laba, antena.</span></li>
+    <li><b>Uji</b><span>Kerjakan kuis, baca pembahasan, ulangi topik yang lemah.</span></li>
+  </ol>
+
+  <div class="smart">
+    <h2>Di mana <span>sistem cerdasnya</span>?</h2>
+    <div><h3>Penjelasan otomatis</h3><p>Setiap kali koefisien diubah, QUADRA menjelaskan dengan kalimat apa yang berubah pada puncak, lebar, dan akar.</p></div>
+    <div><h3>Diagnosis kesalahan</h3><p>Jawaban salah dibaca polanya, misalnya tanda terbalik atau lupa angka 2, lalu diberi penjelasan yang tepat sasaran.</p></div>
+    <div><h3>Rekomendasi belajar</h3><p>Setelah kuis, topik yang masih lemah ditandai dan tombol langsung mengarah ke bagian materinya.</p></div>
+  </div>
+</div>
+
+<!-- MATERI -->
+<div class="section" id="sec-materi">
+  <div class="sec-head"><span class="kicker">Materi</span><h2>Fungsi kuadrat dalam empat langkah</h2><p>Baca dari atas ke bawah. Buka pembahasan contoh soal setelah mencoba sendiri, dan pakai tombol Coba di Lab untuk melihat grafiknya.</p></div>
+  <div class="materi">
+    <nav class="toc" aria-label="Daftar topik">
+      <button type="button" data-les="m1"><b>1</b>Bentuk umum</button>
+      <button type="button" data-les="m2"><b>2</b>Grafik dan unsurnya</button>
+      <button type="button" data-les="m3"><b>3</b>Akar-akar</button>
+      <button type="button" data-les="m4"><b>4</b>Menyusun fungsi</button>
+    </nav>
+    <div class="lessons">
+
+      <article class="card lesson" id="m1">
+        <span class="num">Materi 1</span>
+        <h3>Bentuk umum fungsi kuadrat</h3>
+        <p>Fungsi kuadrat adalah fungsi yang pangkat tertinggi variabelnya dua. Grafiknya selalu berbentuk parabola.</p>
+        <div class="formula">f(x) = <span class="a">a</span>x&sup2; + <span class="b">b</span>x + <span class="c">c</span> &nbsp;<span class="muted">dengan a &ne; 0</span></div>
+        <div class="abc">
+          <div class="ta"><b>a</b><span>Koefisien x&sup2;. Menentukan arah buka dan lebar parabola.</span></div>
+          <div class="tb"><b>b</b><span>Koefisien x. Bersama a, menentukan posisi puncak.</span></div>
+          <div class="tc"><b>c</b><span>Konstanta. Titik potong grafik dengan sumbu y, yaitu (0, c).</span></div>
+        </div>
+        <div class="callout">Mengapa a tidak boleh 0? Jika a = 0, suku x&sup2; hilang dan f(x) = bx + c menjadi garis lurus, bukan parabola.</div>
+        <details class="eg"><summary><span class="chip o">Contoh 1</span>Tentukan a, b, c dari f(x) = &minus;x&sup2; + 5x &minus; 7, lalu hitung f(2).</summary>
+          <div class="sol"><ol>
+            <li>Cocokkan dengan ax&sup2; + bx + c: a = &minus;1, b = 5, c = &minus;7.</li>
+            <li>f(2) = &minus;(2)&sup2; + 5(2) &minus; 7 = &minus;4 + 10 &minus; 7 = &minus;1.</li>
+          </ol><span class="ans">a = &minus;1, b = 5, c = &minus;7, f(2) = &minus;1</span>
+          <div class="row" style="margin-top:.8rem"><button class="btn small" type="button" data-lab="-1,5,-7">Coba di Lab</button></div></div></details>
+        <details class="eg"><summary><span class="chip o">Contoh 2</span>Pada f(x) = 3x&sup2; &minus; 4, berapa nilai b?</summary>
+          <div class="sol"><ol>
+            <li>Tulis lengkap: f(x) = 3x&sup2; + 0x &minus; 4.</li>
+            <li>Tidak ada suku x, sehingga koefisiennya 0.</li>
+          </ol><span class="ans">b = 0 (a = 3, c = &minus;4)</span></div></details>
+      </article>
+
+      <article class="card lesson" id="m2">
+        <span class="num">Materi 2</span>
+        <h3>Grafik parabola dan unsur-unsurnya</h3>
+        <p>Parabola punya sumbu simetri yang membagi grafik menjadi dua sisi yang sama. Titik puncak berada tepat di sumbu itu.</p>
+        <div class="anat"><svg id="anat" viewBox="0 0 480 320" role="img" aria-label="Parabola f(x) = x kuadrat dikurangi 4x ditambah 3 dengan puncak, sumbu simetri, akar, dan titik potong sumbu y"></svg></div>
+        <p class="small-note" style="text-align:center">Contoh: f(x) = x&sup2; &minus; 4x + 3</p>
+        <ul class="unsur">
+          <li><i style="background:var(--blue)"></i><span><b>Arah buka.</b> a &gt; 0 terbuka ke atas, puncak adalah nilai minimum. a &lt; 0 terbuka ke bawah, puncak adalah nilai maksimum.</span></li>
+          <li><i style="background:var(--orange)"></i><span><b>Sumbu simetri.</b> x = &minus;b / 2a</span></li>
+          <li><i style="background:var(--orange)"></i><span><b>Titik puncak.</b> (&minus;b / 2a , f(&minus;b / 2a)). Nilai y puncak juga bisa dihitung dengan c &minus; b&sup2; / 4a.</span></li>
+          <li><i style="background:var(--sky)"></i><span><b>Potong sumbu y.</b> (0, c)</span></li>
+          <li><i style="background:var(--ink)"></i><span><b>Potong sumbu x.</b> Titik dengan f(x) = 0, dibahas di Materi 3.</span></li>
+        </ul>
+        <details class="eg"><summary><span class="chip o">Contoh 1</span>Untuk f(x) = x&sup2; &minus; 4x + 3, tentukan arah buka, titik puncak, dan titik potong sumbu y.</summary>
+          <div class="sol"><ol>
+            <li>a = 1 &gt; 0, jadi parabola terbuka ke atas.</li>
+            <li>x puncak = &minus;(&minus;4) / (2 &middot; 1) = 2.</li>
+            <li>y puncak = f(2) = 4 &minus; 8 + 3 = &minus;1.</li>
+            <li>Potong sumbu y di (0, c) = (0, 3).</li>
+          </ol><span class="ans">Terbuka ke atas, puncak (2, &minus;1) minimum, potong sumbu y (0, 3)</span>
+          <div class="row" style="margin-top:.8rem"><button class="btn small" type="button" data-lab="1,-4,3">Coba di Lab</button></div></div></details>
+        <details class="eg"><summary><span class="chip o">Contoh 2</span>Tentukan nilai maksimum f(x) = &minus;2x&sup2; + 8x &minus; 5.</summary>
+          <div class="sol"><ol>
+            <li>a = &minus;2 &lt; 0, jadi puncak adalah nilai maksimum.</li>
+            <li>x puncak = &minus;8 / (2 &middot; (&minus;2)) = 2.</li>
+            <li>f(2) = &minus;2(4) + 8(2) &minus; 5 = &minus;8 + 16 &minus; 5 = 3.</li>
+          </ol><span class="ans">Nilai maksimum = 3, tercapai saat x = 2</span>
+          <div class="row" style="margin-top:.8rem"><button class="btn small" type="button" data-lab="-2,8,-5">Coba di Lab</button></div></div></details>
+      </article>
+
+      <article class="card lesson" id="m3">
+        <span class="num">Materi 3</span>
+        <h3>Akar-akar fungsi kuadrat</h3>
+        <p>Akar adalah nilai x yang membuat f(x) = 0. Secara grafik, akar adalah titik tempat parabola memotong sumbu x. Ada dua cara utama mencarinya:</p>
+        <ul class="unsur">
+          <li><i style="background:var(--blue)"></i><span><b>Pemfaktoran.</b> Cari dua bilangan yang jumlahnya b dan hasil kalinya c (untuk a = 1).</span></li>
+          <li><i style="background:var(--orange)"></i><span><b>Rumus kuadrat.</b> Selalu bisa dipakai.</span></li>
+        </ul>
+        <div class="formula">x = (&minus;b &plusmn; &radic;D) / 2a &nbsp;dengan&nbsp; D = b&sup2; &minus; 4ac</div>
+        <div class="tbl"><table class="dtable">
+          <thead><tr><th>Diskriminan</th><th>Banyak akar</th><th>Posisi grafik</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">D &gt; 0</td><td>Dua akar berbeda</td><td>Memotong sumbu x di dua titik</td></tr>
+            <tr><td class="mono">D = 0</td><td>Satu akar kembar</td><td>Menyentuh sumbu x di puncak</td></tr>
+            <tr><td class="mono">D &lt; 0</td><td>Tidak ada akar real</td><td>Tidak menyentuh sumbu x</td></tr>
+          </tbody></table></div>
+        <details class="eg"><summary><span class="chip o">Contoh 1</span>Selesaikan x&sup2; &minus; 5x + 6 = 0 dengan pemfaktoran.</summary>
+          <div class="sol"><ol>
+            <li>Cari dua bilangan berjumlah &minus;5 dan berhasil kali 6: &minus;2 dan &minus;3.</li>
+            <li>Faktorkan: (x &minus; 2)(x &minus; 3) = 0.</li>
+            <li>Setiap faktor bernilai nol: x = 2 atau x = 3.</li>
+          </ol><span class="ans">x = 2 atau x = 3</span>
+          <div class="row" style="margin-top:.8rem"><button class="btn small" type="button" data-lab="1,-5,6">Coba di Lab</button></div></div></details>
+        <details class="eg"><summary><span class="chip o">Contoh 2</span>Selesaikan 2x&sup2; + 3x &minus; 2 = 0 dengan rumus kuadrat.</summary>
+          <div class="sol"><ol>
+            <li>a = 2, b = 3, c = &minus;2.</li>
+            <li>D = 3&sup2; &minus; 4(2)(&minus;2) = 9 + 16 = 25, sehingga &radic;D = 5.</li>
+            <li>x = (&minus;3 &plusmn; 5) / 4, jadi x = 2/4 = 1/2 atau x = &minus;8/4 = &minus;2.</li>
+          </ol><span class="ans">x = 1/2 atau x = &minus;2</span>
+          <div class="row" style="margin-top:.8rem"><button class="btn small" type="button" data-lab="2,3,-2">Coba di Lab</button></div></div></details>
+        <details class="eg"><summary><span class="chip o">Contoh 3</span>Berapa banyak titik potong f(x) = x&sup2; &minus; 2x + 3 dengan sumbu x?</summary>
+          <div class="sol"><ol>
+            <li>D = (&minus;2)&sup2; &minus; 4(1)(3) = 4 &minus; 12 = &minus;8.</li>
+            <li>D negatif, jadi tidak ada akar real.</li>
+            <li>Cocok dengan grafik: a &gt; 0 dan puncak (1, 2) berada di atas sumbu x.</li>
+          </ol><span class="ans">Tidak ada titik potong dengan sumbu x</span>
+          <div class="row" style="margin-top:.8rem"><button class="btn small" type="button" data-lab="1,-2,3">Coba di Lab</button></div></div></details>
+      </article>
+
+      <article class="card lesson" id="m4">
+        <span class="num">Materi 4</span>
+        <h3>Menyusun fungsi kuadrat</h3>
+        <p>Kadang yang diketahui adalah grafiknya, dan kamu diminta mencari rumusnya. Pilih bentuk yang sesuai dengan informasi yang ada.</p>
+        <div class="abc">
+          <div class="ta"><b>f(x) = ax&sup2; + bx + c</b><span>Dipakai jika diketahui tiga titik pada grafik.</span></div>
+          <div class="tb"><b>f(x) = a(x &minus; p)(x &minus; q)</b><span>Dipakai jika akarnya p dan q diketahui.</span></div>
+          <div class="tc"><b>f(x) = a(x &minus; h)&sup2; + k</b><span>Dipakai jika puncaknya (h, k) diketahui.</span></div>
+        </div>
+        <details class="eg"><summary><span class="chip o">Contoh 1</span>Grafik memotong sumbu x di x = &minus;1 dan x = 3, serta melalui (0, &minus;6). Tentukan fungsinya.</summary>
+          <div class="sol"><ol>
+            <li>Bentuk akar: f(x) = a(x + 1)(x &minus; 3).</li>
+            <li>Substitusi (0, &minus;6): a(1)(&minus;3) = &minus;6, sehingga a = 2.</li>
+            <li>f(x) = 2(x&sup2; &minus; 2x &minus; 3) = 2x&sup2; &minus; 4x &minus; 6.</li>
+          </ol><span class="ans">f(x) = 2x&sup2; &minus; 4x &minus; 6</span>
+          <div class="row" style="margin-top:.8rem"><button class="btn small" type="button" data-lab="2,-4,-6">Coba di Lab</button></div></div></details>
+        <details class="eg"><summary><span class="chip o">Contoh 2</span>Puncak grafik di (2, &minus;1) dan melalui (0, 3). Tentukan fungsinya.</summary>
+          <div class="sol"><ol>
+            <li>Bentuk puncak: f(x) = a(x &minus; 2)&sup2; &minus; 1.</li>
+            <li>Substitusi (0, 3): a(0 &minus; 2)&sup2; &minus; 1 = 3, jadi 4a = 4 dan a = 1.</li>
+            <li>f(x) = (x &minus; 2)&sup2; &minus; 1 = x&sup2; &minus; 4x + 3.</li>
+          </ol><span class="ans">f(x) = x&sup2; &minus; 4x + 3</span>
+          <div class="row" style="margin-top:.8rem"><button class="btn small" type="button" data-lab="1,-4,3">Coba di Lab</button></div></div></details>
+      </article>
+
+      <div class="next">
+        <div><b>Sudah paham empat topik?</b><div style="opacity:.85;font-size:.92rem">Terapkan di dunia nyata, lalu uji dirimu.</div></div>
+        <div class="row"><button class="btn orange" type="button" data-go="kasus">Studi Kasus</button><button class="btn" type="button" data-go="kuis">Kerjakan Kuis</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LAB -->
+<div class="section" id="sec-lab">
+  <div class="sec-head"><span class="kicker">Inovasi utama</span><h2>Lab Grafik: ketik atau geser koefisiennya</h2><p>Ubah a, b, dan c lalu perhatikan grafik, hasil perhitungan, dan penjelasan otomatis. Coba juga Mode tantangan.</p></div>
+  <div class="lab">
+    <div class="stage">
+      <div class="cv-box"><canvas id="cv" role="img" aria-label="Grafik fungsi kuadrat yang sedang diatur"></canvas></div>
+      <div class="delta" aria-live="polite"><p class="lbl">Penjelasan otomatis</p><p id="delta">Geser salah satu pengatur. Perubahan pada puncak, lebar, dan posisi grafik akan dijelaskan di sini.</p></div>
+    </div>
+    <div class="panel">
+      <div class="card">
+        <div class="ctls">
+          <div class="ctl a"><label for="a-r"><b>a</b><small>lebar dan arah</small></label><input type="range" id="a-r" min="-5" max="5" step="0.1" value="1"><input type="number" id="a-n" min="-5" max="5" step="0.1" value="1" aria-label="Nilai a"></div>
+          <div class="ctl b"><label for="b-r"><b>b</b><small>geser puncak</small></label><input type="range" id="b-r" min="-12" max="12" step="0.1" value="-2"><input type="number" id="b-n" min="-12" max="12" step="0.1" value="-2" aria-label="Nilai b"></div>
+          <div class="ctl c"><label for="c-r"><b>c</b><small>naik turun</small></label><input type="range" id="c-r" min="-10" max="10" step="0.1" value="-3"><input type="number" id="c-n" min="-10" max="10" step="0.1" value="-3" aria-label="Nilai c"></div>
+        </div>
+        <p class="note" id="a-note" aria-live="polite"></p>
+        <div class="row">
+          <button class="btn small" data-preset="1,0,0" type="button">y = x&sup2;</button>
+          <button class="btn small" data-preset="-1,0,4" type="button">Terbuka ke bawah</button>
+          <button class="btn small" data-preset="1,-2,-3" type="button">Dua akar</button>
+          <button class="btn small" data-preset="1,-4,4" type="button">Satu akar</button>
+          <button class="btn small" data-preset="1,-2,3" type="button">Tanpa akar</button>
+        </div>
+      </div>
+      <div class="card">
+        <p class="lbl">Hasil perhitungan</p>
+        <dl class="out">
+          <dt>Bentuk umum</dt><dd id="r-form"></dd>
+          <dt>Bentuk puncak</dt><dd id="r-vform"></dd>
+          <dt>Arah</dt><dd id="r-dir"></dd>
+          <dt>Titik puncak</dt><dd id="r-vertex"></dd>
+          <dt>Sumbu simetri</dt><dd id="r-axis"></dd>
+          <dt>Potong sumbu y</dt><dd id="r-y"></dd>
+          <dt>Diskriminan</dt><dd id="r-d"></dd>
+          <dt>Akar</dt><dd id="r-roots"></dd>
+        </dl>
+      </div>
+      <div class="card">
+        <div class="explain" id="explain"></div>
+        <div class="row" style="margin-top:1rem"><button class="btn" id="chal-toggle" type="button" aria-pressed="false">Mode tantangan</button></div>
+        <div class="chal" id="chal" hidden>
+          <p>Putar a, b, dan c sampai grafik biru menimpa parabola target oranye yang putus-putus.</p>
+          <div class="meter" id="meter" aria-hidden="true"><i id="meter-i"></i></div>
+          <p class="mono" id="chal-status" aria-live="polite">Kecocokan 0%</p>
+          <p class="small-note" id="chal-hint" aria-live="polite"></p>
+          <div class="row"><button class="btn small" id="hint-btn" type="button">Beri petunjuk</button><button class="btn small" id="newtarget-btn" type="button">Target baru</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STUDI KASUS -->
+<div class="section" id="sec-kasus">
+  <div class="sec-head"><span class="kicker">Studi kasus</span><h2>Fungsi kuadrat di dunia nyata</h2><p>Pilih kasus, ubah kondisinya, lalu jelajahi grafiknya. Titik puncak selalu menjawab pertanyaan "paling" (tertinggi, terluas, terbesar).</p></div>
+  <div class="picker" id="picker" role="group" aria-label="Pilih studi kasus"></div>
+  <div class="case-grid">
+    <div class="stage">
+      <div class="cv-box"><canvas id="cv-case" role="img" aria-label="Grafik studi kasus yang dipilih"></canvas></div>
+      <div class="delta" aria-live="polite"><p class="lbl">Yang sedang terjadi</p><p id="case-insight"></p></div>
+    </div>
+    <div class="panel">
+      <div class="card"><p class="lbl" id="case-name"></p><p class="story" id="case-story"></p><div class="formula" id="case-model" style="margin-bottom:0"></div></div>
+      <div class="card"><p class="lbl">Ubah kondisi</p><div id="case-ctls"></div></div>
+      <div class="card"><p class="lbl">Hasil</p><dl class="out" id="case-read"></dl></div>
+      <div class="goal" id="case-goal" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+
+<!-- KUIS -->
+<div class="section" id="sec-kuis">
+  <div class="sec-head"><span class="kicker">Kuis</span><h2>Uji pemahamanmu, dibahas otomatis</h2><p>Sepuluh soal acak dari mudah ke menantang. Setiap jawaban langsung dibahas, dan di akhir kamu mendapat peta topik yang perlu diulang.</p></div>
+  <div class="prac">
+    <div class="card" id="quiz-card">
+      <div class="intro-q" id="quiz-intro">
+        <div class="best"><div><p class="lbl">Skor terbaik</p><b id="best-score">belum ada</b></div></div>
+        <ul>
+          <li>10 soal acak, tingkat naik bertahap</li>
+          <li>Tiap soal langsung dibahas langkah demi langkah</li>
+          <li>Desimal ditulis 1,5 atau pecahan 3/2, keduanya diterima</li>
+        </ul>
+        <div class="row"><button class="btn orange" id="quiz-start" type="button">Mulai kuis</button></div>
+      </div>
+      <div id="quiz-run" hidden>
+        <div class="qhead"><span id="q-count">Soal 1 dari 10</span><span id="q-score">Skor 0</span></div>
+        <div class="qprog" aria-hidden="true"><i id="q-prog"></i></div>
+        <div class="row" style="margin-bottom:.8rem"><span class="chip" id="q-chip-t"></span><span class="chip k" id="q-chip-l"></span></div>
+        <p class="q-text" id="q-text"></p>
+        <div id="q-ans"></div>
+        <div class="actions">
+          <button class="btn blue" id="q-check" type="button">Periksa jawaban</button>
+          <button class="btn orange" id="q-next" type="button" hidden>Soal berikutnya</button>
+          <button class="btn" id="q-graph" type="button">Lihat di Lab</button>
+        </div>
+        <div class="fb" id="q-fb" aria-live="polite" hidden></div>
+      </div>
+      <div id="quiz-end" hidden>
+        <p class="lbl">Hasil kuis</p>
+        <p class="score"><span id="end-score">0</span><small> / 10</small></p>
+        <p id="end-msg" style="margin-top:.6rem"></p>
+        <div class="mast" id="end-bars"></div>
+        <p class="lbl" style="margin-top:1.4rem">Rekomendasi belajar</p>
+        <div class="row" id="end-rec"></div>
+        <div class="row" style="margin-top:1.4rem"><button class="btn orange" id="quiz-again" type="button">Ulangi dengan soal baru</button></div>
+      </div>
+    </div>
+    <aside class="card">
+      <p class="lbl">Cara kerja pembahasan</p>
+      <p class="small-note">Setelah kamu menjawab, QUADRA menampilkan jawaban benar, menebak jenis kekeliruan dari pola jawabanmu (misalnya tanda terbalik), lalu menunjukkan langkah penyelesaian.</p>
+      <p class="small-note" style="margin-top:.8rem">Soal bisa dibuka di Lab Grafik dengan tombol Lihat di Lab, sehingga angkanya terlihat sebagai grafik.</p>
+      <p class="small-note" style="margin-top:.8rem">Skor terbaik tersimpan di peramban ini saja.</p>
+    </aside>
+  </div>
+</div>
+
+</main>
+<footer class="footer"><div class="wrap">QUADRA &middot; Inovasi EduTech MIPA &middot; Menuju Education 5.0</div></footer>
+
+<script>
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var rnd=function(lo,hi){return lo+Math.floor(Math.random()*(hi-lo+1))};
+var pick=function(a){return a[Math.floor(Math.random()*a.length)]};
+var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var col=function(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()};
+
+function fmt(n){var r=Math.round(n*100)/100;if(r===0)r=0;return String(r).replace('.',',').replace('-','−');}
+function poly(a,b,c,nm,v){
+  nm=nm||'f';v=v||'x';
+  var s=(a===1?'':a===-1?'−':fmt(a))+v+'²';
+  if(b!==0)s+=(b>0?' + ':' − ')+(Math.abs(b)===1?'':fmt(Math.abs(b)))+v;
+  if(c!==0)s+=(c>0?' + ':' − ')+fmt(Math.abs(c));
+  return nm+'('+v+') = '+s;
+}
+function calc(p){
+  var a=p.a,b=p.b,c=p.c,xp=-b/(2*a),yp=c-b*b/(4*a);
+  var D=Math.round((b*b-4*a*c)*1e6)/1e6;if(Math.abs(D)<1e-9)D=0;
+  var roots=[];
+  if(D>0){var q=Math.sqrt(D);roots=[(-b-q)/(2*a),(-b+q)/(2*a)].sort(function(u,v){return u-v});}
+  else if(D===0)roots=[xp];
+  return {xp:xp,yp:yp,D:D,roots:roots};
+}
+function pt(q){return '('+fmt(q.xp)+'; '+fmt(q.yp)+')';}
+function rp(n){return 'Rp'+String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
+
+/* ---------- Tab ---------- */
+var TABS=['beranda','materi','lab','kasus','kuis'];
+var cur='beranda';
+function switchTab(name,opt){
+  opt=opt||{};
+  if(TABS.indexOf(name)<0)name='beranda';
+  cur=name;
+  $$('.section').forEach(function(s){s.classList.toggle('active',s.id==='sec-'+name);});
+  $$('.tab-btn').forEach(function(b){
+    if(b.getAttribute('data-tab')===name)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+  });
+  $('#hero').hidden=name!=='beranda';
+  if(name==='lab')drawLab();
+  if(name==='kasus')renderCase();
+  if(name==='beranda')heroStart();
+  if(opt.lesson){
+    var el=document.getElementById(opt.lesson);
+    if(el)setTimeout(function(){el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});},40);
+  }else if(!opt.noScroll){window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});}
+}
+$$('[data-tab]').forEach(function(b){b.addEventListener('click',function(){switchTab(b.getAttribute('data-tab'));});});
+$$('[data-go]').forEach(function(b){b.addEventListener('click',function(){switchTab(b.getAttribute('data-go'));});});
+$$('[data-les]').forEach(function(b){b.addEventListener('click',function(){var el=document.getElementById(b.getAttribute('data-les'));if(el)el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});});});
+$$('[data-lab]').forEach(function(b){b.addEventListener('click',function(){
+  var p=b.getAttribute('data-lab').split(',').map(Number);
+  switchTab('lab');animId++;setAll({a:p[0],b:p[1],c:p[2]});$('#a-note').textContent='';
+  var R=calc(S);
+  $('#delta').textContent='Contoh dimuat: '+poly(S.a,S.b,S.c)+'. Puncak di '+pt(R)+', D = '+fmt(R.D)+(R.D>0?', jadi ada dua akar.':R.D===0?', jadi ada satu akar kembar.':', jadi tidak ada akar real.');
+});});
+
+/* ---------- Hero ---------- */
+var heroRaf=0,heroTick=0;
+function heroDraw(t){
+  var cv=$('#hero-cv');if(!cv||!cv.clientWidth)return;
+  var dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;
+  if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);}
+  var g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+  var a=0.45+0.25*Math.sin(t*0.7),b=1.4*Math.sin(t*0.5+1),c=-0.5+0.8*Math.sin(t*0.35+2);
+  var s=W/10,ox=W/2,oy=H/2,X=function(x){return ox+x*s},Y=function(y){return oy-y*s};
+  g.strokeStyle='rgba(255,255,255,.12)';g.lineWidth=1;g.beginPath();
+  for(var i=-5;i<=5;i++){g.moveTo(X(i),0);g.lineTo(X(i),H);}
+  for(i=-Math.floor(H/(2*s));i<=Math.floor(H/(2*s));i++){g.moveTo(0,Y(i));g.lineTo(W,Y(i));}
+  g.stroke();
+  g.strokeStyle='rgba(255,255,255,.45)';g.lineWidth=1.4;g.beginPath();g.moveTo(0,oy);g.lineTo(W,oy);g.moveTo(ox,0);g.lineTo(ox,H);g.stroke();
+  g.save();g.beginPath();g.rect(0,0,W,H);g.clip();g.beginPath();
+  for(var px=0;px<=W+1;px+=2){var x=(px-ox)/s,y=a*x*x+b*x+c;if(px===0)g.moveTo(px,Y(y));else g.lineTo(px,Y(y));}
+  g.shadowColor='#ff7a1a';g.shadowBlur=16;g.strokeStyle='#ff9446';g.lineWidth=3.4;g.lineJoin='round';g.stroke();g.restore();
+  var xp=-b/(2*a),yp=c-b*b/(4*a);
+  g.beginPath();g.arc(X(xp),Y(yp),5.5,0,Math.PI*2);g.fillStyle='#fff';g.fill();
+  var now=performance.now();
+  if(now-heroTick>120||reduce){
+    heroTick=now;
+    $('#h-a').textContent='a = '+fmt(a);$('#h-b').textContent='b = '+fmt(b);$('#h-c').textContent='c = '+fmt(c);
+  }
+}
+function heroFrame(ts){
+  heroRaf=0;
+  if(document.hidden||cur!=='beranda')return;
+  heroDraw(ts/1000);
+  if(!reduce)heroRaf=requestAnimationFrame(heroFrame);
+}
+function heroStart(){if(!heroRaf){heroRaf=requestAnimationFrame(heroFrame);}}
+document.addEventListener('visibilitychange',heroStart);
+
+/* ---------- Lab ---------- */
+var lim={a:[-5,5],b:[-12,12],c:[-10,10]};
+var S={a:1,b:-2,c:-3};
+var target=null,hintStep=0,animId=0;
+function sync(){['a','b','c'].forEach(function(k){$('#'+k+'-r').value=S[k];$('#'+k+'-n').value=S[k];});}
+function setAll(p){
+  ['a','b','c'].forEach(function(k){
+    var v=Math.round(p[k]*10)/10;v=Math.min(lim[k][1],Math.max(lim[k][0],v));
+    if(k==='a'&&v===0)v=0.1;S[k]=v;
+  });
+  sync();renderLab();
+}
+function setVal(k,v){
+  animId++;
+  var prev={a:S.a,b:S.b,c:S.c};
+  if(isNaN(v)){sync();return;}
+  v=Math.round(v*10)/10;v=Math.min(lim[k][1],Math.max(lim[k][0],v));
+  var note='';
+  if(k==='a'&&v===0){v=prev.a<0?-0.1:0.1;note='a tidak boleh 0. Kalau a = 0, grafiknya menjadi garis lurus dan bukan parabola lagi.';}
+  S[k]=v;sync();renderLab();
+  $('#a-note').textContent=note;
+  if(note){$('#delta').textContent=note;return;}
+  if(prev[k]!==S[k])$('#delta').textContent=explainChange(k,prev);
+}
+function explainChange(k,prev){
+  var A=calc(prev),B=calc(S);
+  if(k==='a'){
+    if(prev.a*S.a<0)return 'Tanda a berubah, jadi parabola terbalik dan sekarang terbuka ke '+(S.a>0?'atas':'bawah')+'. Puncak berpindah ke '+pt(B)+'.';
+    if(Math.abs(S.a)>Math.abs(prev.a))return '|a| membesar, parabola menjadi lebih sempit. Puncak sekarang di '+pt(B)+'.';
+    return '|a| mengecil, parabola menjadi lebih lebar. Puncak sekarang di '+pt(B)+'.';
+  }
+  if(k==='b')return 'b berubah, puncak bergeser dari '+pt(A)+' ke '+pt(B)+'. Titik potong sumbu y tetap di (0; '+fmt(S.c)+').';
+  var d=S.c-prev.c;
+  return 'c '+(d>0?'naik':'turun')+' '+fmt(Math.abs(d))+' satuan, jadi seluruh grafik bergeser ke '+(d>0?'atas':'bawah')+' dengan bentuk yang sama. Puncak sekarang di '+pt(B)+'.';
+}
+function renderLab(){
+  var a=S.a,b=S.b,c=S.c,R=calc(S),xp=R.xp,yp=R.yp,D=R.D;
+  $('#r-form').textContent=poly(a,b,c);
+  var coef=a===1?'':a===-1?'−':fmt(a);
+  var inner=Math.abs(xp)<0.005?'x²':'(x '+(xp>0?'−':'+')+' '+fmt(Math.abs(xp))+')²';
+  var tail=Math.abs(yp)<0.005?'':(yp>0?' + ':' − ')+fmt(Math.abs(yp));
+  $('#r-vform').textContent='f(x) = '+coef+inner+tail;
+  var width=Math.abs(a)>1?'lebih sempit dari y = x²':Math.abs(a)<1?'lebih lebar dari y = x²':'selebar y = x²';
+  $('#r-dir').textContent=(a>0?'Ke atas':'Ke bawah')+', '+width;
+  $('#r-vertex').textContent=pt(R)+(a>0?' minimum':' maksimum');
+  $('#r-axis').textContent='x = '+fmt(xp);
+  $('#r-y').textContent='(0; '+fmt(c)+')';
+  $('#r-d').textContent=fmt(D)+(D>0?'  (dua akar berbeda)':D===0?'  (satu akar kembar)':'  (tanpa akar real)');
+  $('#r-roots').textContent=D>0?'x₁ = '+fmt(R.roots[0])+';  x₂ = '+fmt(R.roots[1]):D===0?'x = '+fmt(xp):'Tidak ada akar real';
+  $('#explain').innerHTML=
+    '<p><b>a = '+fmt(a)+'.</b> Parabola terbuka ke '+(a>0?'atas, titik puncak adalah minimum.':'bawah, titik puncak adalah maksimum.')+(Math.abs(a)>1?' Karena |a| lebih dari 1, grafik lebih sempit.':Math.abs(a)<1?' Karena |a| kurang dari 1, grafik lebih lebar.':'')+'</p>'+
+    '<p><b>b = '+fmt(b)+'.</b> Sumbu simetri x = −b/2a = '+fmt(xp)+', jadi puncak berada di x = '+fmt(xp)+'.</p>'+
+    '<p><b>c = '+fmt(c)+'.</b> Grafik memotong sumbu y di (0; '+fmt(c)+'). '+(D>0?'D positif, sehingga ada dua titik potong dengan sumbu x.':D===0?'D = 0, sehingga grafik hanya menyentuh sumbu x.':'D negatif, sehingga grafik tidak menyentuh sumbu x.')+'</p>';
+  drawLab();updateChal();
+}
+function drawLab(){
+  var cv=$('#cv'),dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;
+  if(!W||!H)return;
+  var pw=Math.round(W*dpr),ph=Math.round(H*dpr);
+  if(cv.width!==pw||cv.height!==ph){cv.width=pw;cv.height=ph;}
+  var g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=col('--cv-bg');g.fillRect(0,0,W,H);
+  var s=W/20,ox=W/2,oy=H/2,ymax=H/(2*s);
+  var X=function(x){return ox+x*s},Y=function(y){return oy-y*s};
+  g.lineWidth=1;g.strokeStyle=col('--cv-grid');g.beginPath();
+  var i;
+  for(i=-10;i<=10;i++){g.moveTo(X(i),0);g.lineTo(X(i),H);}
+  for(i=-Math.floor(ymax);i<=Math.floor(ymax);i++){g.moveTo(0,Y(i));g.lineTo(W,Y(i));}
+  g.stroke();
+  g.strokeStyle=col('--cv-axis');g.lineWidth=1.5;g.beginPath();
+  g.moveTo(0,oy);g.lineTo(W,oy);g.moveTo(ox,0);g.lineTo(ox,H);g.stroke();
+  g.font='10px "JetBrains Mono", monospace';
+  g.fillStyle=col('--cv-text');g.textAlign='center';g.textBaseline='top';
+  for(i=-10;i<=10;i+=2){if(i!==0)g.fillText(String(i).replace('-','−'),X(i),oy+4);}
+  g.textAlign='right';g.textBaseline='middle';
+  for(i=-Math.floor(ymax);i<=Math.floor(ymax);i++){if(i!==0&&i%2===0)g.fillText(String(i).replace('-','−'),ox-5,Y(i));}
+  function curve(p,color,dash,w){
+    g.save();g.beginPath();g.rect(0,0,W,H);g.clip();g.beginPath();
+    var st=false;
+    for(var px=0;px<=W+1;px+=1.5){
+      var x=(px-ox)/s,y=p.a*x*x+p.b*x+p.c,py=Y(y);
+      if(!st){g.moveTo(px,py);st=true;}else g.lineTo(px,py);
+    }
+    g.setLineDash(dash);g.lineWidth=w;g.strokeStyle=color;g.lineJoin='round';g.stroke();g.restore();
+  }
+  function label(t,x,y,align){
+    g.font='11px "JetBrains Mono", monospace';g.textAlign=align;g.textBaseline='middle';
+    g.lineWidth=4;g.strokeStyle=col('--cv-halo');g.lineJoin='round';g.strokeText(t,x,y);
+    g.fillStyle=col('--ink');g.fillText(t,x,y);
+  }
+  function dot(x,y,r,fill){
+    g.beginPath();g.arc(x,y,r,0,Math.PI*2);g.fillStyle=fill;g.fill();
+    g.lineWidth=2;g.strokeStyle=col('--cv-halo');g.stroke();
+  }
+  if(target)curve(target,col('--orange'),[7,5],2.4);
+  var R=calc(S);
+  if(Math.abs(R.xp)<10){
+    g.save();g.setLineDash([5,5]);g.strokeStyle=col('--orange');g.globalAlpha=.6;g.lineWidth=1.3;
+    g.beginPath();g.moveTo(X(R.xp),0);g.lineTo(X(R.xp),H);g.stroke();g.restore();
+  }
+  curve(S,col('--blue'),[],3.2);
+  R.roots.forEach(function(r){if(Math.abs(r)<10)dot(X(r),oy,5,col('--ink'));});
+  if(Math.abs(S.c)<ymax){dot(X(0),Y(S.c),5,col('--sky'));label('(0; '+fmt(S.c)+')',X(0)+9,Y(S.c)+(S.c>=0?-12:12),'left');}
+  if(Math.abs(R.yp)<ymax-0.4&&Math.abs(R.xp)<10){
+    dot(X(R.xp),Y(R.yp),6,col('--orange'));
+    var right=X(R.xp)<W*0.6;
+    label('puncak ('+fmt(R.xp)+'; '+fmt(R.yp)+')',X(R.xp)+(right?10:-10),Y(R.yp)+(S.a>0?16:-16),right?'left':'right');
+  }
+}
+function rmsTo(t){
+  var sum=0,n=0;
+  for(var x=-6;x<=6;x+=0.25){var d=(S.a-t.a)*x*x+(S.b-t.b)*x+(S.c-t.c);sum+=d*d;n++;}
+  return Math.sqrt(sum/n);
+}
+function newTarget(){
+  var t=null;
+  for(var i=0;i<200;i++){
+    var a=pick([-2,-1,-0.5,0.5,1,2]),b=rnd(-6,6),c=rnd(-6,6),xp=-b/(2*a),yp=c-b*b/(4*a);
+    if(Math.abs(xp)<=6&&Math.abs(yp)<=8&&(b!==0||c!==0)){t={a:a,b:b,c:c};break;}
+  }
+  target=t||{a:1,b:-4,c:1};hintStep=0;
+  $('#chal-hint').textContent='';$('#hint-btn').disabled=false;$('#hint-btn').textContent='Beri petunjuk';
+  setAll({a:1,b:0,c:0});
+  $('#delta').textContent='Target baru muncul sebagai garis putus-putus oranye. Mulai dari y = x² lalu geser a, b, dan c.';
+}
+function updateChal(){
+  if(!target)return;
+  var rms=rmsTo(target),pct=Math.max(0,Math.round(100-rms*8));
+  var ok=Math.abs(S.a-target.a)<0.05&&Math.abs(S.b-target.b)<0.05&&Math.abs(S.c-target.c)<0.05;
+  if(ok)pct=100;
+  $('#meter-i').style.width=pct+'%';$('#meter').classList.toggle('good',ok);
+  $('#chal-status').textContent=ok?'Cocok! Target: '+poly(target.a,target.b,target.c):'Kecocokan '+pct+'%';
+}
+function giveHint(){
+  var T=calc(target);
+  var h=[
+    'Target terbuka ke '+(target.a>0?'atas':'bawah')+' dan memotong sumbu y di (0; '+fmt(target.c)+').',
+    'Sumbu simetri target berada di x = '+fmt(T.xp)+'. Ingat x = −b/2a.',
+    'Puncak target ada di '+pt(T)+'. Cari a dan b yang menghasilkan puncak itu.'
+  ];
+  $('#chal-hint').textContent=h[hintStep];hintStep++;
+  if(hintStep>=h.length){$('#hint-btn').disabled=true;$('#hint-btn').textContent='Petunjuk habis';}
+}
+$('#chal-toggle').addEventListener('click',function(){
+  var on=this.getAttribute('aria-pressed')!=='true';
+  this.setAttribute('aria-pressed',String(on));$('#chal').hidden=!on;
+  if(on)newTarget();else{target=null;drawLab();}
+});
+$('#hint-btn').addEventListener('click',giveHint);
+$('#newtarget-btn').addEventListener('click',newTarget);
+['a','b','c'].forEach(function(k){
+  $('#'+k+'-r').addEventListener('input',function(){setVal(k,parseFloat(this.value));});
+  $('#'+k+'-n').addEventListener('change',function(){setVal(k,parseFloat(String(this.value).replace(',','.')));});
+});
+$$('[data-preset]').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    animId++;
+    var p=btn.getAttribute('data-preset').split(',').map(Number);
+    setAll({a:p[0],b:p[1],c:p[2]});$('#a-note').textContent='';
+    var R=calc(S);
+    $('#delta').textContent='Contoh dimuat: '+poly(S.a,S.b,S.c)+'. Puncak di '+pt(R)+', D = '+fmt(R.D)+(R.D>0?', jadi ada dua akar.':R.D===0?', jadi ada satu akar kembar.':', jadi tidak ada akar real.');
+  });
+});
+
+/* ---------- Anatomi parabola (Materi 2) ---------- */
+function buildAnatomy(){
+  var svg=$('#anat');if(!svg)return;
+  var W=480,H=320,L=34,R=14,T=14,B=30,x0=-0.7,x1=4.7,y0=-1.8,y1=6.2;
+  var X=function(x){return L+(x-x0)/(x1-x0)*(W-L-R)},Y=function(y){return T+(y1-y)/(y1-y0)*(H-T-B)};
+  var h='',i;
+  for(i=0;i<=4;i++)h+='<line x1="'+X(i)+'" y1="'+T+'" x2="'+X(i)+'" y2="'+(H-B)+'" stroke="'+col('--cv-grid')+'"/><text class="t" x="'+X(i)+'" y="'+(H-B+16)+'" text-anchor="middle" style="stroke:none">'+i+'</text>';
+  for(i=-1;i<=6;i++)h+='<line x1="'+L+'" y1="'+Y(i)+'" x2="'+(W-R)+'" y2="'+Y(i)+'" stroke="'+col('--cv-grid')+'"/>';
+  h+='<line x1="'+L+'" y1="'+Y(0)+'" x2="'+(W-R)+'" y2="'+Y(0)+'" stroke="'+col('--cv-axis')+'" stroke-width="1.5"/>';
+  h+='<line x1="'+X(0)+'" y1="'+T+'" x2="'+X(0)+'" y2="'+(H-B)+'" stroke="'+col('--cv-axis')+'" stroke-width="1.5"/>';
+  h+='<line x1="'+X(2)+'" y1="'+T+'" x2="'+X(2)+'" y2="'+(H-B)+'" stroke="'+col('--orange')+'" stroke-width="1.6" stroke-dasharray="6 5"/>';
+  var pts=[];for(var x=x0;x<=x1+0.001;x+=0.05){pts.push(X(x).toFixed(1)+','+Y(x*x-4*x+3).toFixed(1));}
+  h+='<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+col('--blue')+'" stroke-width="3.4" stroke-linejoin="round" stroke-linecap="round"/>';
+  h+='<circle cx="'+X(2)+'" cy="'+Y(-1)+'" r="6" fill="'+col('--orange')+'"/>';
+  h+='<circle cx="'+X(1)+'" cy="'+Y(0)+'" r="5" fill="'+col('--ink')+'"/><circle cx="'+X(3)+'" cy="'+Y(0)+'" r="5" fill="'+col('--ink')+'"/>';
+  h+='<circle cx="'+X(0)+'" cy="'+Y(3)+'" r="5.5" fill="'+col('--sky')+'"/>';
+  h+='<text class="t" x="'+(X(2)+10)+'" y="'+(Y(-1)+4)+'">puncak (2; −1)</text>';
+  h+='<text class="t" x="'+(X(2)+7)+'" y="'+Y(5.6)+'">sumbu simetri x = 2</text>';
+  h+='<text class="t" x="'+(X(1)-8)+'" y="'+(Y(0)-10)+'" text-anchor="end">akar x = 1</text>';
+  h+='<text class="t" x="'+(X(3)+8)+'" y="'+(Y(0)-10)+'">akar x = 3</text>';
+  h+='<text class="t" x="'+(X(0)+10)+'" y="'+(Y(3)-8)+'">(0; 3) potong sumbu y</text>';
+  svg.innerHTML=h;
+}
+
+/* ---------- Studi kasus ---------- */
+function tland(p){return (p.v+Math.sqrt(p.v*p.v+20*p.h0))/10;}
+function snap(v,mn,st){return Math.round((Math.round((v-mn)/st)*st+mn)*10000)/10000;}
+var CASES=[
+ {id:'bola',name:'Lemparan Bola',sub:'Fisika gerak parabola',
+  story:'Seorang atlet melempar bola basket ke atas. Tinggi bola (meter) setelah t detik mengikuti h(t) = −5t² + vt + h₀, dengan v kecepatan awal dan h₀ tinggi tangan saat bola dilepas. Percepatan gravitasi dibulatkan menjadi 10 m/s².',
+  params:[{k:'v',label:'Kecepatan awal v',unit:' m/s',min:5,max:20,step:.5,def:12},{k:'h0',label:'Tinggi awal h₀',unit:' m',min:0,max:3,step:.1,def:2}],
+  cursor:{label:'Waktu t',unit:' s',step:.05,def:.5,dom:function(p){return [0,tland(p)];}},
+  coef:function(p){return {a:-5,b:p.v,c:p.h0};},
+  model:function(p){return poly(-5,p.v,p.h0,'h','t');},
+  view:function(p){return {x0:0,x1:4.5,y0:0,y1:25,xl:'waktu t (s)',yl:'tinggi h (m)'};},
+  optLabel:'tinggi maks',
+  read:function(p,x,f){return [['Waktu',fmt(x)+' s'],['Tinggi bola',fmt(f(x))+' m'],['Waktu mencapai puncak',fmt(p.v/10)+' s'],['Tinggi maksimum',fmt(p.h0+p.v*p.v/20)+' m'],['Bola mendarat pada',fmt(tland(p))+' s']];},
+  insight:function(p,x){var tp=p.v/10;if(Math.abs(x-tp)<0.026)return 'Di puncak lintasan bola berhenti naik sesaat sebelum turun. Inilah titik puncak parabola, yaitu nilai maksimum fungsinya.';return x<tp?'Bola masih naik. Kecepatannya berkurang terus karena gravitasi, sehingga kenaikan tingginya makin kecil.':'Bola sudah turun. Pergerakannya simetris dengan saat naik terhadap sumbu t = '+fmt(tp)+' s.';},
+  goal:{text:'Geser waktu t sampai tepat di puncak lintasan.',check:function(p,x){return Math.abs(x-p.v/10)<0.026;},done:'Tepat. Puncak ada di t = −b/2a = v/10.'}
+ },
+ {id:'kebun',name:'Kebun Berpagar',sub:'Luas maksimum',
+  story:'Seorang petani punya pagar sepanjang P meter untuk mengelilingi kebun persegi panjang. Jika lebarnya x, maka panjangnya P/2 − x dan luasnya L(x) = x(P/2 − x).',
+  params:[{k:'P',label:'Panjang pagar P',unit:' m',min:20,max:80,step:4,def:40}],
+  cursor:{label:'Lebar x',unit:' m',step:.5,def:4,dom:function(p){return [0,p.P/2];}},
+  coef:function(p){return {a:-1,b:p.P/2,c:0};},
+  model:function(p){return poly(-1,p.P/2,0,'L','x');},
+  view:function(p){return {x0:0,x1:p.P/2,y0:0,y1:Math.pow(p.P/4,2)*1.18,xl:'lebar x (m)',yl:'luas L (m²)'};},
+  optLabel:'luas maks',
+  read:function(p,x,f){return [['Lebar',fmt(x)+' m'],['Panjang',fmt(p.P/2-x)+' m'],['Luas kebun',fmt(f(x))+' m²'],['Luas maksimum',fmt(Math.pow(p.P/4,2))+' m²'],['Terjadi saat lebar',fmt(p.P/4)+' m']];},
+  insight:function(p,x){var o=p.P/4;if(Math.abs(x-o)<0.026)return 'Lebar sama dengan panjang, jadi kebun berbentuk persegi. Untuk keliling tertentu, luas terbesar selalu diperoleh dari persegi.';return x<o?'Kebun masih terlalu sempit. Menambah lebar masih menambah luas, karena kita belum mencapai puncak.':'Kebun sudah terlalu lebar dan panjangnya menyusut. Luasnya turun lagi setelah melewati puncak.';},
+  goal:{text:'Temukan lebar kebun yang membuat luasnya paling besar.',check:function(p,x){return Math.abs(x-p.P/4)<0.026;},done:'Benar. Luas maksimum tercapai saat x = P/4, yaitu kebun berbentuk persegi.'}
+ },
+ {id:'laba',name:'Harga Es Teh',sub:'Laba maksimum',
+  story:'Sebuah kedai menjual es teh. Jika harga per gelas x ribu rupiah, terjual 100 − 10x gelas per hari. Biaya membuat satu gelas k ribu rupiah. Laba harian (ribu rupiah) adalah U(x) = (x − k)(100 − 10x).',
+  params:[{k:'k',label:'Biaya per gelas k',unit:' ribu',min:2,max:5,step:.5,def:3}],
+  cursor:{label:'Harga per gelas x',unit:' ribu',step:.25,def:4.5,dom:function(p){return [p.k,10];}},
+  coef:function(p){return {a:-10,b:100+10*p.k,c:-100*p.k};},
+  model:function(p){return poly(-10,100+10*p.k,-100*p.k,'U','x');},
+  view:function(p){var m=10*Math.pow(5-p.k/2,2);return {x0:0,x1:10.5,y0:0,y1:m*1.2,xl:'harga x (ribu Rp)',yl:'laba U (ribu Rp)'};},
+  optLabel:'laba maks',
+  read:function(p,x,f){var xo=5+p.k/2;return [['Harga per gelas',rp(x*1000)],['Terjual',fmt(100-10*x)+' gelas'],['Laba harian',rp(f(x)*1000)],['Laba maksimum',rp(10*Math.pow(5-p.k/2,2)*1000)],['Terjadi pada harga',rp(xo*1000)]];},
+  insight:function(p,x){var xo=5+p.k/2;if(Math.abs(x-xo)<0.01)return 'Inilah harga yang paling menguntungkan. Naik sedikit lagi, tambahan margin tidak sebanding dengan pembeli yang pergi.';return x<xo?'Harga terlalu murah. Banyak yang membeli, tetapi margin per gelas tipis sehingga laba belum maksimum.':'Harga terlalu mahal. Margin per gelas besar, tetapi pembelinya terlalu sedikit.';},
+  goal:{text:'Cari harga per gelas yang memberi laba harian terbesar.',check:function(p,x){return Math.abs(x-(5+p.k/2))<0.01;},done:'Tepat. Harga optimum x = −b/2a = 5 + k/2.'}
+ },
+ {id:'antena',name:'Antena Parabola',sub:'Fisika gelombang',
+  story:'Piringan antena berdiameter 2 meter berbentuk parabola y = x²/(4f), dengan f jarak fokus. Sinyal yang datang sejajar sumbu dipantulkan tepat ke titik fokus tempat penerima dipasang.',
+  params:[{k:'f',label:'Jarak fokus f',unit:' m',min:.3,max:1.5,step:.05,def:.6}],
+  cursor:{label:'Jarak dari sumbu x',unit:' m',step:.05,def:.6,dom:function(p){return [0,1];}},
+  coef:function(p){return {a:1/(4*p.f),b:0,c:0};},
+  model:function(p){return 'y = x² / (4 · '+fmt(p.f)+') = '+fmt(1/(4*p.f))+'x²';},
+  view:function(p){return {x0:-1.3,x1:1.3,y0:-0.1,y1:1.7,xl:'jarak dari sumbu x (m)',yl:'kedalaman y (m)'};},
+  dom:function(p){return [-1,1];},
+  noOpt:true,
+  extra:'rays',
+  read:function(p,x,f){return [['Jarak dari sumbu',fmt(x)+' m'],['Kedalaman di sana',fmt(f(x))+' m'],['Titik fokus','(0; '+fmt(p.f)+') m'],['Kedalaman di tepi',fmt(1/(4*p.f))+' m'],['Nilai a',fmt(1/(4*p.f))]];},
+  insight:function(p,x){return 'Semua sinar sejajar sumbu dipantulkan melewati titik fokus. Makin kecil f, piringan makin dalam dan fokus makin dekat ke dasar piringan.';},
+  goal:{text:'Atur jarak fokus f agar kedalaman piringan di tepi (x = 1 m) tepat 0,5 m.',check:function(p,x){return Math.abs(1/(4*p.f)-0.5)<0.006;},done:'Pas. Kedalaman 1/(4f) = 0,5 saat f = 0,5 m.'}
+ }
+];
+var CI=0;
+CASES.forEach(function(c){c.pv={};c.params.forEach(function(q){c.pv[q.k]=q.def;});c.xc=c.cursor.def;});
+function buildPicker(){
+  var h='';
+  CASES.forEach(function(c,i){h+='<button class="pick" type="button" data-ci="'+i+'" aria-pressed="'+(i===CI)+'"><b>'+c.name+'</b><span>'+c.sub+'</span></button>';});
+  $('#picker').innerHTML=h;
+  $$('.pick').forEach(function(b){b.addEventListener('click',function(){CI=+b.getAttribute('data-ci');$$('.pick').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});buildCase();});});
+}
+function buildCase(){
+  var c=CASES[CI];
+  $('#case-name').textContent=c.name;$('#case-story').textContent=c.story;
+  var h='';
+  c.params.forEach(function(q){
+    h+='<div class="cc"><label for="cp-'+q.k+'">'+q.label+'<output id="co-'+q.k+'"></output></label><input type="range" id="cp-'+q.k+'" min="'+q.min+'" max="'+q.max+'" step="'+q.step+'" value="'+c.pv[q.k]+'"></div>';
+  });
+  h+='<div class="cc cur"><label for="cc-x">'+c.cursor.label+' (geser untuk menjelajah)<output id="co-x"></output></label><input type="range" id="cc-x" step="'+c.cursor.step+'"></div>';
+  $('#case-ctls').innerHTML=h;
+  c.params.forEach(function(q){
+    $('#cp-'+q.k).addEventListener('input',function(){c.pv[q.k]=parseFloat(this.value);renderCase();});
+  });
+  $('#cc-x').addEventListener('input',function(){c.xc=parseFloat(this.value);renderCase();});
+  renderCase();
+}
+function renderCase(){
+  if(cur!=='kasus')return;
+  var c=CASES[CI],p=c.pv,cf=c.coef(p),f=function(x){return cf.a*x*x+cf.b*x+cf.c;};
+  var dom=(c.dom||c.cursor.dom)(p),cd=c.cursor.dom(p),st=c.cursor.step;
+  var mn=cd[0],mx=Math.floor((cd[1]-mn)/st+1e-9)*st+mn;
+  var x=Math.min(mx,Math.max(mn,c.xc));x=snap(x,mn,st);c.xc=x;
+  var xi=$('#cc-x');xi.min=mn;xi.max=mx;xi.value=x;
+  c.params.forEach(function(q){$('#co-'+q.k).textContent=fmt(p[q.k])+q.unit;});
+  $('#co-x').textContent=fmt(x)+c.cursor.unit;
+  $('#case-model').textContent=c.model(p);
+  $('#case-read').innerHTML=c.read(p,x,f).map(function(r){return '<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>';}).join('');
+  $('#case-insight').textContent=c.insight(p,x);
+  var done=c.goal.check(p,x),gl=$('#case-goal');
+  gl.className='goal'+(done?' done':'');
+  gl.innerHTML='<b>'+(done?'Tantangan selesai':'Tantangan')+'</b>'+(done?c.goal.done:c.goal.text);
+  drawCase(c,p,x,f,dom,cf);
+}
+function niceStep(r){var raw=r/6,m=Math.pow(10,Math.floor(Math.log(raw)/Math.LN10)),n=raw/m;return (n<1.5?1:n<3.5?2:n<7.5?5:10)*m;}
+function drawCase(c,p,x,f,dom,cf){
+  var cv=$('#cv-case'),dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;
+  if(!W||!H)return;
+  if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);}
+  var g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  g.fillStyle=col('--cv-bg');g.fillRect(0,0,W,H);
+  var v=c.view(p),ML=48,MB=40,MT=16,MR=16,pw=W-ML-MR,ph=H-MT-MB;
+  var X=function(a){return ML+(a-v.x0)/(v.x1-v.x0)*pw},Y=function(b){return MT+ph-(b-v.y0)/(v.y1-v.y0)*ph};
+  g.font='10.5px "JetBrains Mono", monospace';
+  var sx=niceStep(v.x1-v.x0),sy=niceStep(v.y1-v.y0),t;
+  g.strokeStyle=col('--cv-grid');g.lineWidth=1;g.beginPath();
+  for(t=Math.ceil(v.x0/sx)*sx;t<=v.x1+1e-9;t+=sx){g.moveTo(X(t),MT);g.lineTo(X(t),MT+ph);}
+  for(t=Math.ceil(v.y0/sy)*sy;t<=v.y1+1e-9;t+=sy){g.moveTo(ML,Y(t));g.lineTo(ML+pw,Y(t));}
+  g.stroke();
+  g.fillStyle=col('--cv-text');g.textAlign='center';g.textBaseline='top';
+  for(t=Math.ceil(v.x0/sx)*sx;t<=v.x1+1e-9;t+=sx)g.fillText(fmt(t),X(t),MT+ph+5);
+  g.textAlign='right';g.textBaseline='middle';
+  for(t=Math.ceil(v.y0/sy)*sy;t<=v.y1+1e-9;t+=sy)g.fillText(fmt(t),ML-6,Y(t));
+  g.textAlign='center';g.textBaseline='bottom';g.fillText(v.xl,ML+pw/2,H-4);
+  g.save();g.translate(11,MT+ph/2);g.rotate(-Math.PI/2);g.textAlign='center';g.textBaseline='top';g.fillText(v.yl,0,0);g.restore();
+  g.strokeStyle=col('--cv-axis');g.lineWidth=1.5;g.beginPath();g.moveTo(ML,MT);g.lineTo(ML,MT+ph);g.lineTo(ML+pw,MT+ph);g.stroke();
+  g.save();g.beginPath();g.rect(ML,MT-2,pw,ph+4);g.clip();
+  function path(){g.beginPath();var first=true;for(var xx=dom[0];xx<=dom[1]+1e-9;xx+=(dom[1]-dom[0])/160){var px=X(xx),py=Y(f(xx));if(first){g.moveTo(px,py);first=false;}else g.lineTo(px,py);}}
+  if(!c.noOpt){path();g.lineTo(X(dom[1]),Y(Math.max(0,v.y0)));g.lineTo(X(dom[0]),Y(Math.max(0,v.y0)));g.closePath();g.globalAlpha=.1;g.fillStyle=col('--blue');g.fill();g.globalAlpha=1;}
+  path();g.lineWidth=3.4;g.strokeStyle=col('--blue');g.lineJoin='round';g.stroke();
+  if(c.extra==='rays'){
+    var fy=p.f;g.lineWidth=1.4;g.strokeStyle=col('--orange');
+    [-0.8,-0.45,0.45,0.8].forEach(function(rx){
+      var ry=f(rx);g.beginPath();g.moveTo(X(rx),Y(1.65));g.lineTo(X(rx),Y(ry));g.lineTo(X(0),Y(fy));g.stroke();
+    });
+  }
+  g.restore();
+  function dot(px,py,r,fill){g.beginPath();g.arc(px,py,r,0,Math.PI*2);g.fillStyle=fill;g.fill();g.lineWidth=2.4;g.strokeStyle=col('--cv-halo');g.stroke();}
+  function label(txt,px,py,al){g.font='11px "JetBrains Mono", monospace';g.textAlign=al;g.textBaseline='middle';g.lineWidth=4;g.strokeStyle=col('--cv-halo');g.lineJoin='round';g.strokeText(txt,px,py);g.fillStyle=col('--ink');g.fillText(txt,px,py);}
+  if(!c.noOpt){
+    var xo=-cf.b/(2*cf.a),yo=f(xo);
+    g.save();g.setLineDash([5,5]);g.strokeStyle=col('--orange');g.lineWidth=1.3;g.beginPath();g.moveTo(X(xo),Y(yo));g.lineTo(X(xo),MT+ph);g.moveTo(X(xo),Y(yo));g.lineTo(ML,Y(yo));g.stroke();g.restore();
+    dot(X(xo),Y(yo),6.5,col('--orange'));
+    var right=X(xo)<ML+pw*0.55;
+    label(c.optLabel+' ('+fmt(xo)+'; '+fmt(yo)+')',X(xo)+(right?10:-10),Y(yo)-14,right?'left':'right');
+  }else{
+    dot(X(0),Y(p.f),6.5,col('--orange'));label('fokus (0; '+fmt(p.f)+')',X(0)+12,Y(p.f),'left');
+  }
+  var yc=f(x);
+  g.save();g.setLineDash([3,4]);g.strokeStyle=col('--blue');g.lineWidth=1.2;g.beginPath();g.moveTo(X(x),Y(yc));g.lineTo(X(x),MT+ph);g.stroke();g.restore();
+  dot(X(x),Y(yc),6,col('--blue'));
+}
+
+/* ---------- Kuis ---------- */
+var TOP={
+ nilai:{n:'Bentuk umum dan nilai fungsi',tab:'materi',les:'m1'},
+ arah:{n:'Arah dan sifat grafik',tab:'materi',les:'m2'},
+ puncak:{n:'Titik puncak',tab:'materi',les:'m2'},
+ ypot:{n:'Titik potong sumbu y',tab:'materi',les:'m2'},
+ akar:{n:'Akar-akar',tab:'materi',les:'m3'},
+ diskr:{n:'Diskriminan',tab:'materi',les:'m3'},
+ fungsi:{n:'Menyusun fungsi',tab:'materi',les:'m4'},
+ terapan:{n:'Penerapan nyata',tab:'kasus'}
+};
+var LVN=['Mudah','Sedang','Menantang'];
+function F(a,b,c,nm,v){return '<span class="fx">'+poly(a,b,c,nm,v)+'</span>';}
+function fac(p){return p===0?'x':'(x '+(p>0?'−':'+')+' '+Math.abs(p)+')';}
+
+function qNilai(L){
+  var a=pick(L===1?[1,2,-1]:[1,2,3,-1,-2]),b=rnd(-6,6),c=rnd(-8,8),k=L===1?rnd(1,3):pick([-3,-2,-1,1,2,3]);
+  var ans=a*k*k+b*k+c,w=[{v:a*k+b*k+c,m:'Suku ax² berarti a dikali k kuadrat (k × k), bukan a dikali k.'}];
+  if(k<0)w.push({v:-a*k*k+b*k+c,m:'Kuadrat bilangan negatif tetap positif: ('+fmt(k)+')² = '+fmt(k*k)+', bukan '+fmt(-k*k)+'.'});
+  return {topic:'nilai',type:'num',text:'Jika '+F(a,b,c)+', tentukan nilai f('+fmt(k)+').',ans:ans,wrongs:w,
+    steps:['Substitusikan x = '+fmt(k)+' ke f(x).','Hitung kuadratnya dulu: ('+fmt(k)+')² = '+fmt(k*k)+'.','f('+fmt(k)+') = '+fmt(a)+'·'+fmt(k*k)+' + ('+fmt(b)+')·('+fmt(k)+') + ('+fmt(c)+') = '+fmt(ans)+'.'],fn:{a:a,b:b,c:c}};
+}
+function qArah(L){
+  var a=pick(L===1?[1,2,-1,-2]:[1,2,3,-1,-2,-3]),b=pick([-6,-4,-3,-2,2,3,4,6]),c=rnd(-6,6);
+  var txt=L===3?'f(x) = '+fmt(c)+' '+(b>0?'+ ':'− ')+(Math.abs(b)===1?'':fmt(Math.abs(b)))+'x '+(a>0?'+ ':'− ')+(Math.abs(a)===1?'':fmt(Math.abs(a)))+'x²':poly(a,b,c);
+  return {topic:'arah',type:'mc',text:'Perhatikan fungsi <span class="fx">'+txt+'</span>. Grafiknya terbuka ke ... dan titik puncaknya merupakan nilai ...',
+    options:['Atas, nilai minimum','Atas, nilai maksimum','Bawah, nilai minimum','Bawah, nilai maksimum'],ans:a>0?0:3,wrongs:[],
+    hintMC:'Arah buka hanya ditentukan tanda koefisien x². Jika a > 0 parabola terbuka ke atas dan puncaknya minimum. Jika a < 0 terbuka ke bawah dan puncaknya maksimum.',
+    steps:['Cari koefisien x² pada fungsi: a = '+fmt(a)+(L===3?' (suku x² boleh berada di mana saja).':'.'),'a '+(a>0?'> 0, sehingga parabola terbuka ke atas dan titik puncak adalah nilai minimum.':'< 0, sehingga parabola terbuka ke bawah dan titik puncak adalah nilai maksimum.')],fn:{a:a,b:b,c:c}};
+}
+function qPuncak(L){
+  var as=L===1?[1,-1]:L===2?[1,-1,2,-2]:[1,-1,2,-2,3,-3],a=1,xp=2,c=-1;
+  for(var i=0;i<200;i++){
+    var A=pick(as),X=rnd(-4,4);
+    if(L>=2&&A%2===0&&Math.random()<0.5)X=rnd(-4,4)+0.5;
+    if(X===0)continue;
+    var B=-2*A*X,C=rnd(-6,6),Y=C-A*X*X;
+    if(Math.abs(B)>12||Math.abs(C)>10||Math.abs(Y)>12)continue;
+    a=A;xp=X;c=C;break;
+  }
+  var b=-2*a*xp,yp=c-a*xp*xp;
+  if(Math.random()<0.5){
+    return {topic:'puncak',type:'num',text:'Tentukan koordinat x titik puncak dari '+F(a,b,c)+'.',ans:xp,
+      wrongs:[{v:-xp,m:'Tandanya terbalik. Dalam x = −b/(2a), tanda minus di depan b tetap dihitung bersama tanda b.'},{v:-b/a,m:'Penyebutnya 2a, bukan a. Jangan lupa angka 2.'}],
+      steps:['Pakai rumus sumbu simetri x = −b / (2a).','Dari fungsi itu a = '+fmt(a)+' dan b = '+fmt(b)+'.','x = −('+fmt(b)+') / (2 · '+fmt(a)+') = '+fmt(xp)+'.'],fn:{a:a,b:b,c:c}};
+  }
+  return {topic:'puncak',type:'num',text:'Berapa nilai '+(a>0?'minimum':'maksimum')+' fungsi '+F(a,b,c)+'?',ans:Math.round(yp*100)/100,
+    wrongs:[{v:xp,m:'Itu koordinat x puncak. Nilai '+(a>0?'minimum':'maksimum')+' adalah koordinat y, yaitu f(x puncak).'},{v:c,m:'c adalah titik potong sumbu y, belum tentu sama dengan nilai puncak.'}],
+    steps:['Cari sumbu simetri dulu: x = −b / (2a) = '+fmt(xp)+'.','Nilai '+(a>0?'minimum':'maksimum')+' adalah f('+fmt(xp)+') karena puncak berada di x itu.','f('+fmt(xp)+') = '+fmt(yp)+'.'],fn:{a:a,b:b,c:c}};
+}
+function qAkar(L){
+  var as=L===1?[1]:L===2?[1,-1,2]:[1,-1,2,-2,3],a=1,p=-1,q=3;
+  for(var i=0;i<300;i++){
+    var A=pick(as),P1=rnd(-6,6),Q1=rnd(-6,6);
+    if(P1===Q1)continue;
+    if(Math.abs(A*(P1+Q1))>12||Math.abs(A*P1*Q1)>10)continue;
+    a=A;p=P1;q=Q1;break;
+  }
+  var b=-a*(p+q),c=a*p*q,hi=Math.max(p,q),lo=Math.min(p,q),pre=a===1?'':a===-1?'−':fmt(a)+' ';
+  return {topic:'akar',type:'num',text:'Tentukan akar terbesar dari '+F(a,b,c)+'.',ans:hi,
+    wrongs:[{v:lo,m:'Itu akar terkecil. Soal meminta akar yang terbesar.'},{v:-hi,m:'Tandanya terbalik. Faktor (x − p) bernilai nol saat x = +p, bukan −p.'}],
+    steps:['Faktor a = '+fmt(a)+' tidak memengaruhi akar. Cari dua bilangan yang jumlahnya −b/a = '+fmt(p+q)+' dan hasil kalinya c/a = '+fmt(p*q)+'.','Bilangannya '+fmt(p)+' dan '+fmt(q)+', sehingga f(x) = '+pre+fac(p)+fac(q)+'.','Akar-akarnya '+fmt(lo)+' dan '+fmt(hi)+'. Yang terbesar adalah '+fmt(hi)+'.'],fn:{a:a,b:b,c:c}};
+}
+function qYpot(L){
+  if(L===1){
+    var a=pick([1,-1,2,-2]),b=rnd(-8,8),c=rnd(-9,9);
+    return {topic:'ypot',type:'num',text:'Grafik '+F(a,b,c)+' memotong sumbu y di y = ...',ans:c,
+      wrongs:[{v:b,m:'b adalah koefisien x. Saat x = 0 suku bx hilang, jadi yang tersisa adalah c.'}],
+      steps:['Titik potong sumbu y berarti x = 0.','f(0) = '+fmt(a)+'·(0)² + '+fmt(b)+'·(0) + '+fmt(c)+' = '+fmt(c)+'.'],fn:{a:a,b:b,c:c}};
+  }
+  var A=1,p=2,q=1;
+  for(var i=0;i<300;i++){
+    var A1=pick([1,-1,2,-2,3]),P1=rnd(-4,4),Q1=rnd(-6,6);
+    if(P1===0)continue;
+    if(Math.abs(2*A1*P1)>12||Math.abs(A1*P1*P1+Q1)>10)continue;
+    A=A1;p=P1;q=Q1;break;
+  }
+  var ans=A*p*p+q,inner='(x '+(p>0?'−':'+')+' '+Math.abs(p)+')²';
+  var form='f(x) = '+(A===1?'':A===-1?'−':fmt(A)+' ')+inner+(q===0?'':(q>0?' + ':' − ')+Math.abs(q));
+  var w=[{v:q,m:'q adalah nilai puncak. Titik potong sumbu y diperoleh dengan mengisi x = 0.'}];
+  if(A!==1)w.push({v:p*p+q,m:'Jangan lupa mengalikan (0 − p)² dengan a.'});
+  return {topic:'ypot',type:'num',text:'Grafik <span class="fx">'+form+'</span> memotong sumbu y di y = ...',ans:ans,wrongs:w,
+    steps:['Titik potong sumbu y berarti x = 0.','f(0) = '+(A===1?'':A===-1?'−':fmt(A)+' · ')+'('+fmt(-p)+')²'+(q===0?'':(q>0?' + ':' − ')+Math.abs(q))+' = '+fmt(ans)+'.'],fn:{a:A,b:-2*A*p,c:A*p*p+q}};
+}
+function qDiskrMC(){
+  var a=1,b=-2,c=3;
+  for(var i=0;i<300;i++){
+    var kind=rnd(0,2),A=pick([1,-1,2]),B,C;
+    if(kind===2){var p=rnd(-5,5),q=rnd(-5,5);if(p===q)continue;B=-A*(p+q);C=A*p*q;}
+    else if(kind===1){var k=rnd(-4,4);B=-2*A*k;C=A*k*k;}
+    else{var k2=rnd(-3,3),m=rnd(1,4);B=-2*A*k2;C=A*(k2*k2+m);}
+    if(Math.abs(B)>12||Math.abs(C)>10)continue;
+    a=A;b=B;c=C;break;
+  }
+  var D=b*b-4*a*c,idx=D>0?2:D===0?1:0;
+  return {topic:'diskr',type:'mc',text:'Berapa banyak akar real dari '+F(a,b,c)+'?',options:['Tidak ada akar real','Satu akar (kembar)','Dua akar berbeda'],ans:idx,wrongs:[],
+    hintMC:'Hitung D = b² − 4ac lebih dulu, lalu lihat tandanya: D > 0 dua akar, D = 0 satu akar, D < 0 tidak ada akar real.',
+    steps:['Hitung D = b² − 4ac = ('+fmt(b)+')² − 4·('+fmt(a)+')·('+fmt(c)+') = '+fmt(D)+'.','D '+(D>0?'> 0, jadi ada dua akar real berbeda.':D===0?'= 0, jadi ada satu akar kembar.':'< 0, jadi tidak ada akar real.')],fn:{a:a,b:b,c:c}};
+}
+function qDiskr(L){
+  if(L>=2&&Math.random()<0.5)return qDiskrMC();
+  var a=pick(L===1?[1]:[1,-1,2,-2]),b=rnd(-8,8),c=rnd(-8,8),D=b*b-4*a*c;
+  var w=[{v:b*b+4*a*c,m:'Suku 4ac harus dikurangkan, bukan ditambahkan: D = b² − 4ac.'},{v:b*b,m:'Suku −4ac belum ikut dihitung.'}];
+  if(a!==1)w.push({v:b*b-4*c,m:'Suku 4ac memakai a juga. Kalikan 4 · a · c, bukan hanya 4c.'});
+  return {topic:'diskr',type:'num',text:'Hitung diskriminan (D) dari '+F(a,b,c)+'.',ans:D,wrongs:w,
+    steps:['Rumus D = b² − 4ac.','a = '+fmt(a)+', b = '+fmt(b)+', c = '+fmt(c)+'.','D = ('+fmt(b)+')² − 4·('+fmt(a)+')·('+fmt(c)+') = '+fmt(D)+'.'],fn:{a:a,b:b,c:c}};
+}
+function qFungsi(L){
+  if(L===3&&Math.random()<0.5){
+    var a,h,k,c;
+    for(var j=0;j<200;j++){a=pick([1,-1,2,-2,3]);h=pick([-3,-2,-1,1,2,3]);k=rnd(-5,5);c=a*h*h+k;if(Math.abs(c)<=20)break;}
+    var inner='(x '+(h>0?'−':'+')+' '+Math.abs(h)+')²';
+    return {topic:'fungsi',type:'num',text:'Fungsi kuadrat f(x) = a'+inner+(k===0?'':(k>0?' + ':' − ')+Math.abs(k))+' melalui titik (0, '+fmt(c)+'). Nilai a adalah ...',ans:a,
+      wrongs:[{v:c-k,m:'Setelah memindahkan k ke ruas kiri, bagi dengan h² (bukan hanya menghitung selisih).'}],
+      steps:['Substitusi (0, '+fmt(c)+'): '+fmt(c)+' = a('+fmt(-h)+')² '+(k>=0?'+ ':'− ')+Math.abs(k)+'.','a · '+fmt(h*h)+' = '+fmt(c-k)+', maka a = '+fmt(c-k)+' / '+fmt(h*h)+' = '+fmt(a)+'.']};
+  }
+  var as=L===1?[1,2]:[1,2,-1,-2,3],A=1,p=2,q=-3,C=-6;
+  for(var i=0;i<300;i++){
+    var A1=pick(as),P1=rnd(-4,4),Q1=rnd(-4,4);
+    if(!P1||!Q1||P1===Q1)continue;
+    if(Math.abs(A1*P1*Q1)>24)continue;
+    A=A1;p=P1;q=Q1;C=A1*P1*Q1;break;
+  }
+  return {topic:'fungsi',type:'num',text:'Grafik fungsi kuadrat f memotong sumbu x di x = '+fmt(p)+' dan x = '+fmt(q)+', serta melalui titik (0, '+fmt(C)+'). Jika f(x) = a(x − ('+fmt(p)+'))(x − ('+fmt(q)+')), nilai a adalah ...',ans:A,
+    wrongs:[{v:-A,m:'Periksa tanda: (0 − p)(0 − q) sama dengan p·q, jadi f(0) = a·p·q.'},{v:C,m:'c adalah nilai f(0). Kamu perlu membagi c dengan p·q untuk mendapat a.'}],
+    steps:['Substitusi (0, '+fmt(C)+'): f(0) = a(0 − '+fmt(p)+')(0 − '+fmt(q)+') = a·'+fmt(p*q)+'.','Jadi '+fmt(C)+' = a · '+fmt(p*q)+', maka a = '+fmt(A)+'.']};
+}
+function qTerapan(L){
+  var vr=L===1?pick(['bola','pagar']):pick(['bola','pagar','laba']);
+  if(vr==='bola'){
+    var v=L===1?10:pick([10,20]),h0=rnd(0,3),ans=h0+v*v/20,tp=v/10;
+    return {topic:'terapan',type:'num',text:'Tinggi bola (meter) setelah t detik dinyatakan <span class="fx">'+poly(-5,v,h0,'h','t')+'</span>. Berapa tinggi maksimum bola?',ans:ans,
+      wrongs:[{v:tp,m:'Itu waktu mencapai puncak (sumbu t). Tinggi maksimum adalah nilai h pada saat itu.'},{v:h0,m:'h₀ adalah tinggi awal saat bola dilepas, bukan tinggi maksimumnya.'}],
+      steps:['Waktu puncak: t = −b / (2a) = −'+v+' / (2 · (−5)) = '+fmt(tp)+' detik.','h('+fmt(tp)+') = −5('+fmt(tp*tp)+') + '+v+'·'+fmt(tp)+' + '+h0+' = '+fmt(ans)+' meter.'],fn:{a:-5,b:v,c:h0}};
+  }
+  if(vr==='pagar'){
+    var P=pick(L===3?[28,36,44]:[16,20,24,32,40]),m=P/4;
+    return {topic:'terapan',type:'num',text:'Seorang peternak memiliki pagar sepanjang '+P+' m untuk mengelilingi kandang berbentuk persegi panjang. Berapa luas terbesar (dalam m²) kandang yang dapat dibuat?',ans:m*m,
+      wrongs:[{v:m,m:'Itu ukuran sisi saat luas maksimum. Soal menanyakan luasnya.'},{v:P/2,m:'P/2 adalah jumlah panjang dan lebar. Luas diperoleh dari panjang dikali lebar.'}],
+      steps:['Misal lebar x, maka panjang = '+(P/2)+' − x.','Luas L(x) = x('+(P/2)+' − x) = −x² + '+(P/2)+'x.','Puncak di x = −b/2a = '+m+', maka L = '+m+' × '+m+' = '+(m*m)+' m².'],fn:{a:-1,b:P/2,c:0}};
+  }
+  var a,xp,c,yp;
+  for(var i=0;i<200;i++){a=pick([-1,-2,-3]);xp=rnd(3,12);c=-rnd(5,30);yp=c-a*xp*xp;if(yp>0&&yp<=400)break;}
+  var b=-2*a*xp,askX=L<3;
+  return {topic:'terapan',type:'num',text:'Laba (ribu rupiah) dari penjualan x unit barang adalah <span class="fx">'+poly(a,b,c,'U','x')+'</span>. '+(askX?'Berapa unit barang agar laba maksimum?':'Berapa laba maksimum (dalam ribu rupiah)?'),ans:askX?xp:yp,
+    wrongs:askX?[{v:-b/a,m:'Penyebut rumus sumbu simetri adalah 2a. Kamu mungkin lupa angka 2.'},{v:yp,m:'Itu nilai laba maksimum. Soal menanyakan banyak unitnya.'}]:[{v:xp,m:'Itu jumlah unit saat laba maksimum, bukan nilai labanya.'}],
+    steps:['Puncak di x = −b/2a = −('+fmt(b)+') / (2 · ('+fmt(a)+')) = '+fmt(xp)+' unit.','U('+fmt(xp)+') = '+fmt(a)+'('+fmt(xp*xp)+') + '+fmt(b)+'·'+fmt(xp)+' '+(c>=0?'+ ':'− ')+Math.abs(c)+' = '+fmt(yp)+' ribu rupiah.'+(askX?' Yang ditanyakan jumlah unitnya: '+fmt(xp)+'.':'')],fn:{a:a,b:b,c:c}};
+}
+var GEN={nilai:qNilai,arah:qArah,puncak:qPuncak,ypot:qYpot,akar:qAkar,diskr:qDiskr,fungsi:qFungsi,terapan:qTerapan};
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function parseNum(s){
+  s=String(s).trim().replace(/−/g,'-').replace(/\s+/g,'').replace(',','.');
+  if(!s)return NaN;
+  if(s.indexOf('/')>-1){var pr=s.split('/'),n=parseFloat(pr[0]),d=parseFloat(pr[1]);return d?n/d:NaN;}
+  if(!/^-?\d*\.?\d+$/.test(s))return NaN;
+  return parseFloat(s);
+}
+var QZ={plan:[],i:0,res:[],q:null,done:false,sel:-1};
+function bestGet(){try{var v=localStorage.getItem('quadra-best');return v===null?null:+v;}catch(e){return null;}}
+function bestSet(v){try{localStorage.setItem('quadra-best',String(v));}catch(e){}}
+function showBest(){var b=bestGet();$('#best-score').textContent=b===null?'belum ada':b+' / 10';}
+function qView(n){$('#quiz-intro').hidden=n!=='intro';$('#quiz-run').hidden=n!=='run';$('#quiz-end').hidden=n!=='end';}
+function startQuiz(){
+  QZ.plan=shuffle(['nilai','arah','ypot','puncak','akar','diskr','fungsi','terapan','puncak','akar']);
+  QZ.i=0;QZ.res=[];qView('run');showQ();
+}
+function showQ(){
+  var i=QZ.i,L=i<3?1:i<7?2:3,t=QZ.plan[i];
+  var Q=GEN[t](L);Q.level=L;QZ.q=Q;QZ.done=false;QZ.sel=-1;
+  $('#q-count').textContent='Soal '+(i+1)+' dari 10';
+  $('#q-score').textContent='Skor '+QZ.res.filter(function(r){return r.ok;}).length;
+  $('#q-prog').style.width=(i/10*100)+'%';
+  $('#q-chip-t').textContent=TOP[t].n;$('#q-chip-l').textContent=LVN[L-1];
+  $('#q-text').innerHTML=Q.text;
+  var box=$('#q-ans');box.innerHTML='';
+  if(Q.type==='mc'){
+    var w=document.createElement('div');w.className='opts';w.setAttribute('role','group');w.setAttribute('aria-label','Pilihan jawaban');
+    Q.options.forEach(function(o,k){
+      var b=document.createElement('button');b.type='button';b.className='btn opt';b.id='opt-'+k;b.textContent=o;b.setAttribute('aria-pressed','false');
+      b.addEventListener('click',function(){if(QZ.done)return;QZ.sel=k;$$('.opt').forEach(function(x,j){x.setAttribute('aria-pressed',String(j===k));});});
+      w.appendChild(b);
+    });
+    box.appendChild(w);
+  }else{
+    var r=document.createElement('div');r.className='ans-row';
+    r.innerHTML='<label class="sr" for="qans">Jawabanmu</label><input type="text" id="qans" inputmode="decimal" autocomplete="off" placeholder="Jawabanmu" aria-describedby="q-fb">';
+    box.appendChild(r);
+    $('#qans').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();if(!QZ.done)qCheck();else qNext();}});
+  }
+  $('#q-fb').hidden=true;$('#q-fb').className='fb';$('#q-fb').innerHTML='';
+  $('#q-check').hidden=false;$('#q-next').hidden=true;
+  $('#q-graph').hidden=!Q.fn;
+}
+function qFb(kind,title,body,steps){
+  var el=$('#q-fb'),Q=QZ.q;el.hidden=false;el.className='fb '+kind;
+  var h='<strong>'+title+'</strong>'+(body?'<p>'+body+'</p>':'');
+  if(steps)h+='<p class="why">Pembahasan</p><ol>'+Q.steps.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ol>';
+  el.innerHTML=h;
+}
+function qCheck(){
+  if(QZ.done)return;
+  var Q=QZ.q,ok=false,v;
+  if(Q.type==='mc'){
+    if(QZ.sel<0){qFb('bad','Pilih salah satu jawaban dulu.','',false);return;}
+    ok=QZ.sel===Q.ans;
+  }else{
+    v=parseNum($('#qans').value);
+    if(isNaN(v)){qFb('bad','Isi dengan angka.','Desimal seperti 1,5 atau pecahan seperti 3/2 sama-sama diterima.',false);return;}
+    ok=Math.abs(v-Q.ans)<0.011;
+  }
+  QZ.done=true;QZ.res.push({t:Q.topic,ok:ok});
+  var hint='';
+  if(!ok){
+    if(Q.type==='num'){
+      for(var i=0;i<Q.wrongs.length;i++){if(Math.abs(Q.wrongs[i].v-v)<0.011&&Math.abs(Q.wrongs[i].v-Q.ans)>=0.011){hint=Q.wrongs[i].m;break;}}
+      if(!hint)hint='Jawabanmu belum tepat. Bandingkan dengan langkah di bawah untuk menemukan di mana hitunganmu berbeda.';
+    }else hint=Q.hintMC;
+  }
+  qFb(ok?'ok':'bad',ok?'Benar.':'Belum tepat. Jawaban yang benar: '+(Q.type==='mc'?Q.options[Q.ans]:fmt(Q.ans))+'.',ok?'':hint,true);
+  $('#q-score').textContent='Skor '+QZ.res.filter(function(r){return r.ok;}).length;
+  $('#q-prog').style.width=((QZ.i+1)/10*100)+'%';
+  var a=$('#qans');if(a)a.disabled=true;
+  $$('.opt').forEach(function(x){x.disabled=true;});
+  $('#q-check').hidden=true;$('#q-next').hidden=false;$('#q-next').textContent=QZ.i===9?'Lihat hasil':'Soal berikutnya';$('#q-next').focus();
+}
+function qNext(){
+  if(QZ.i>=9){finishQuiz();return;}
+  QZ.i++;showQ();
+}
+function finishQuiz(){
+  var score=QZ.res.filter(function(r){return r.ok;}).length;
+  var best=bestGet();if(best===null||score>best)bestSet(score);showBest();
+  $('#end-score').textContent=score;
+  $('#end-msg').textContent=score>=9?'Sangat baik. Kamu menguasai hampir semua topik fungsi kuadrat.':score>=7?'Baik. Tinggal merapikan beberapa topik di bawah.':score>=5?'Cukup. Ulangi topik yang ditandai oranye, lalu coba kuis lagi.':'Masih perlu latihan. Mulai dari materi dan Lab Grafik, lalu ulangi kuis ini.';
+  var by={};QZ.res.forEach(function(r){var o=by[r.t]||(by[r.t]={n:0,c:0});o.n++;if(r.ok)o.c++;});
+  var h='',weak=[];
+  Object.keys(by).forEach(function(t){
+    var o=by[t],pct=Math.round(o.c/o.n*100),bad=o.c<o.n;if(bad)weak.push(t);
+    h+='<div class="mrow"><div class="t"><span>'+TOP[t].n+'</span><span>'+o.c+'/'+o.n+'</span></div><div class="bar2" role="img" aria-label="'+TOP[t].n+' '+pct+' persen benar"><i class="'+(bad?'warn':'')+'" style="width:'+pct+'%"></i></div></div>';
+  });
+  $('#end-bars').innerHTML=h;
+  var rec=$('#end-rec');rec.innerHTML='';
+  if(!weak.length){rec.innerHTML='<p class="small-note">Semua topik aman. Coba ulangi kuis dengan soal baru untuk menjaga ketajaman.</p>';}
+  weak.forEach(function(t){
+    var b=document.createElement('button');b.type='button';b.className='btn small';b.textContent='Pelajari: '+TOP[t].n;
+    b.addEventListener('click',function(){switchTab(TOP[t].tab,TOP[t].les?{lesson:TOP[t].les}:{});});
+    rec.appendChild(b);
+  });
+  qView('end');
+}
+$('#quiz-start').addEventListener('click',startQuiz);
+$('#quiz-again').addEventListener('click',startQuiz);
+$('#q-check').addEventListener('click',qCheck);
+$('#q-next').addEventListener('click',qNext);
+$('#q-graph').addEventListener('click',function(){
+  var Q=QZ.q;if(!Q||!Q.fn)return;
+  target=null;$('#chal-toggle').setAttribute('aria-pressed','false');$('#chal').hidden=true;
+  animId++;switchTab('lab');setAll(Q.fn);$('#a-note').textContent='';
+  var R=calc(S);
+  $('#delta').textContent='Soal dimuat: '+poly(S.a,S.b,S.c)+'. Perhatikan puncak di '+pt(R)+' dan titik potong dengan kedua sumbu.';
+});
+
+/* ---------- Mulai ---------- */
+sync();renderLab();buildPicker();buildAnatomy();showBest();
+buildCase();
+function redrawAll(){
+  if(cur==='lab')drawLab();if(cur==='kasus')renderCase();if(cur==='beranda'&&reduce)heroDraw(2);
+}
+if(window.ResizeObserver){
+  [$('#cv').parentNode,$('#cv-case').parentNode,$('#hero-cv').parentNode].forEach(function(n){new ResizeObserver(redrawAll).observe(n);});
+}else window.addEventListener('resize',redrawAll);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(redrawAll);
+try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){buildAnatomy();redrawAll();});}catch(e){}
+new MutationObserver(function(){buildAnatomy();redrawAll();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+var h0=(location.hash||'').replace('#','');
+if(TABS.indexOf(h0)>-1)switchTab(h0,{noScroll:true});else{$('#hero').hidden=false;heroStart();}
+if(reduce)heroDraw(2);
+})();
+</script>
